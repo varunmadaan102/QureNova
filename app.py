@@ -21,18 +21,18 @@ st.set_page_config(
 )
 apply_theme()
 
-PAGES = {
-    "Overview": st.Page(overview.render, title="Overview", icon=":material/biotech:"),
-    "Data Workspace": st.Page(data_workspace.render, title="Data Workspace", icon=":material/table_view:"),
-    "Experiment Lab": st.Page(experiment_lab.render, title="Experiment Lab", icon=":material/science:"),
-    "Quantum Analysis": st.Page(quantum_analysis.render, title="Quantum Analysis", icon=":material/blur_on:"),
-    "Benchmark": st.Page(benchmark.render, title="Benchmark", icon=":material/monitoring:"),
-    "Patient Analysis": st.Page(patient_analysis.render, title="Patient Analysis", icon=":material/person_search:"),
-    "Explainability": st.Page(explainability.render, title="Explainability", icon=":material/psychology:"),
-    "System Status": st.Page(system_status.render, title="System Status", icon=":material/health_and_safety:"),
-    "Limitations": st.Page(limitations.render, title="Limitations", icon=":material/warning:"),
-    "Guide & Methodology": st.Page(guide.render, title="Guide & Methodology", icon=":material/menu_book:"),
-}
+PAGES = [
+    st.Page(overview.render, title="Overview", url_path="overview", icon=":material/biotech:"),
+    st.Page(data_workspace.render, title="Data Workspace", url_path="data-workspace", icon=":material/table_view:"),
+    st.Page(experiment_lab.render, title="Experiment Lab", url_path="experiment-lab", icon=":material/science:"),
+    st.Page(quantum_analysis.render, title="Quantum Analysis", url_path="quantum-analysis", icon=":material/blur_on:"),
+    st.Page(benchmark.render, title="Benchmark", url_path="benchmark", icon=":material/monitoring:"),
+    st.Page(patient_analysis.render, title="Patient Analysis", url_path="patient-analysis", icon=":material/person_search:"),
+    st.Page(explainability.render, title="Explainability", url_path="explainability", icon=":material/psychology:"),
+    st.Page(system_status.render, title="System Status", url_path="system-status", icon=":material/health_and_safety:"),
+    st.Page(limitations.render, title="Limitations", url_path="limitations", icon=":material/warning:"),
+    st.Page(guide.render, title="Guide & Methodology", url_path="guide", icon=":material/menu_book:"),
+]
 
 with st.sidebar:
     sidebar_brand()
