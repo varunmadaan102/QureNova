@@ -14,6 +14,8 @@ from core.data import (
 )
 from core.preprocessing import build_preprocessor
 from models.classical import build_classical_models
+from core.clinical import agreement_summary, priority_for_risk, risk_category
+from core.reliability import assess_input_reliability
 
 
 _ROOT = Path(__file__).resolve().parents[1]
@@ -135,15 +137,26 @@ def predict_patients(
         raise ValueError("Patient CSV schema error: " + "; ".join(schema["errors"]))
     aligned, _ = align_features(patient_df, features, return_report=True)
     Xp = aligned if prep is None else prep.transform(aligned)
+    reference_aligned = align_features(reference_df, features)
+    identifier_columns = [
+        column for column in patient_df.columns
+        if str(column).strip().lower() in {"patient_id", "patient id", "id", "case_id"}
+    ]
     rows = []
 
     for idx in range(len(patient_df)):
-        row = {"Patient": int(idx + 1)}
+        one_aligned = aligned.iloc[[idx]]
+        one = Xp.iloc[idx : idx + 1] if hasattr(Xp, "iloc") else Xp[idx : idx + 1]
+        identifier = (
+            patient_df.iloc[idx][identifier_columns[0]]
+            if identifier_columns
+            else f"PT-{idx + 1:03d}"
+        )
+        row = {"Patient": str(identifier)}
         votes = []
         probabilities = []
 
         for name, model in models.items():
-            one = Xp.iloc[idx : idx + 1] if hasattr(Xp, "iloc") else Xp[idx : idx + 1]
             pred = int(model.predict(one)[0])
             prob = (
                 float(model.predict_proba(one)[0, 1])
@@ -160,7 +173,12 @@ def predict_patients(
         row["Average Probability"] = (
             float(np.mean(probabilities)) if probabilities else None
         )
-        row["Model Agreement"] = "High" if len(set(votes)) == 1 else "Mixed"
+        row["Model Agreement"] = agreement_summary(votes)
+        row["Risk Category"] = risk_category(row["Average Probability"])
+        row["Priority"] = priority_for_risk(row["Risk Category"])
+        reliability = assess_input_reliability(reference_aligned, one_aligned)
+        row["Prediction Reliability"] = reliability["level"]
+        row["Reliability Note"] = reliability["reason"]
         if row["Average Probability"] is not None:
             distance = abs(row["Average Probability"] - 0.5)
             row["Model Confidence"] = (

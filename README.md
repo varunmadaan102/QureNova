@@ -48,6 +48,15 @@ that intentionally want to layer those integrations separately.
 
 CSV → validation → preprocessing → stratified cross-validation → classical models + QSVC → benchmark → patient prediction → explainability.
 
+Patient Analysis adds a clinician-oriented review queue without presenting a
+diagnosis: each row receives an experimental LOW/MODERATE/ELEVATED review label,
+a HIGH/MEDIUM/ROUTINE priority, model-agreement status, and an input-reliability
+signal. Reliability compares the row with the reference training population
+using a robust standardized distance and is intended to flag distribution shift,
+not to identify a medical abnormality. The thresholds and messages are
+centralized in `config/settings.py` and must be recalibrated and externally
+validated before any clinical use.
+
 ## SIH 26139 alignment
 
 The current implementation satisfies the demonstrable MVP requirements:

@@ -23,6 +23,9 @@ def render():
   radiology interpretation.
 - Probability outputs should not be interpreted as calibrated clinical risk unless calibration and external validation are performed.
 - Distribution shift and out-of-distribution data remain major deployment concerns.
+- Patient queue risk categories, priorities, and reliability levels are
+  experimental review aids; they are not validated clinical thresholds or
+  calibrated patient risk.
 """)
 
     with panel("Responsible interpretation"):
