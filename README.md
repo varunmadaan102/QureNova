@@ -29,9 +29,9 @@ python scripts/train_models.py
 
 Artifacts are written to `results/models/` (`*.joblib`,
 `evaluation_results.json`, `feature_metadata.json`, and
-`dataset_metadata.json`). Install `requirements-optional.txt` to enable
-XGBoost, SHAP, or the quantum demonstration; the app detects missing optional
-packages and keeps classical workflows available.
+`dataset_metadata.json`). The full `requirements.txt` installation includes
+XGBoost, SHAP, and the quantum demonstration dependencies; the app still
+detects missing packages gracefully and keeps classical workflows available.
 
 If PowerShell blocks `pip.exe`, always use:
 
@@ -39,11 +39,10 @@ If PowerShell blocks `pip.exe`, always use:
 python -m pip install -r requirements.txt
 ```
 
-For a lightweight deployment, install only `requirements.txt`. The optional
-integrations in `requirements-optional.txt` add XGBoost, SHAP, and Qiskit; the
-application detects missing packages and keeps the classical workflow
-available. Quantum execution is deliberately opt-in and is not required for
-startup or for the default jury walkthrough.
+For a lightweight deployment, install `requirements.txt`. Quantum execution is
+deliberately opt-in and is not required for startup or for the default jury
+walkthrough. `requirements-optional.txt` remains available for environments
+that intentionally want to layer those integrations separately.
 
 ## Workflow
 
