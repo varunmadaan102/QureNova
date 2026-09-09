@@ -60,6 +60,7 @@ def render():
         "XGBoost": "xgboost",
         "SHAP": "shap",
         "Qiskit": "qiskit",
+        "Qiskit Aer": "qiskit_aer",
         "Qiskit Machine Learning": "qiskit_machine_learning",
     }
     with panel("Optional integrations"):

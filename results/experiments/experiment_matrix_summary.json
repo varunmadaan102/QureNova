@@ -1,0 +1,202 @@
+{
+  "started_at": "2026-09-09T13:14:03.318692+00:00",
+  "dataset_rows": 569,
+  "dataset_features": 30,
+  "target": "diagnosis",
+  "qiskit_available": false,
+  "runs": [
+    {
+      "label": "classical-cv-3",
+      "status": "completed",
+      "history": "results\\experiments\\exp-20260909-131404-394903e5.json",
+      "runtime_seconds": 0.210870600072667,
+      "classical": {
+        "Logistic Regression": {
+          "f1_mean": 0.9491293020704785,
+          "accuracy_mean": 0.9630836350134596,
+          "runtime_seconds": 0.10746089997701347
+        },
+        "SVM (RBF)": {
+          "f1_mean": 0.9555416936418273,
+          "accuracy_mean": 0.9665924069432842,
+          "runtime_seconds": 0.1009788999799639
+        }
+      },
+      "quantum": {
+        "available": false,
+        "reason": "Quantum simulation was not run. Enable 'Run experimental quantum kernel' to execute the optional, slower Qiskit workflow.",
+        "metrics": null,
+        "configuration": null
+      }
+    },
+    {
+      "label": "classical-cv-5",
+      "status": "completed",
+      "history": "results\\experiments\\exp-20260909-131405-266b2863.json",
+      "runtime_seconds": 0.270489500137046,
+      "classical": {
+        "Logistic Regression": {
+          "f1_mean": 0.9536889594176451,
+          "accuracy_mean": 0.9665735134295919,
+          "runtime_seconds": 0.09555900003761053
+        },
+        "SVM (RBF)": {
+          "f1_mean": 0.9528354978354979,
+          "accuracy_mean": 0.9648191274646793,
+          "runtime_seconds": 0.17254129983484745
+        }
+      },
+      "quantum": {
+        "available": false,
+        "reason": "Quantum simulation was not run. Enable 'Run experimental quantum kernel' to execute the optional, slower Qiskit workflow.",
+        "metrics": null,
+        "configuration": null
+      }
+    },
+    {
+      "label": "quantum-zz-2q",
+      "status": "completed",
+      "history": "results\\experiments\\exp-20260909-131405-1246b1a9.json",
+      "runtime_seconds": 0.26562980003654957,
+      "classical": {
+        "Logistic Regression": {
+          "f1_mean": 0.9536889594176451,
+          "accuracy_mean": 0.9665735134295919,
+          "runtime_seconds": 0.09652310004457831
+        },
+        "SVM (RBF)": {
+          "f1_mean": 0.9528354978354979,
+          "accuracy_mean": 0.9648191274646793,
+          "runtime_seconds": 0.16601489996537566
+        }
+      },
+      "quantum": {
+        "available": false,
+        "reason": "Qiskit is not installed or failed to import. Classical experiments still completed.",
+        "metrics": null,
+        "configuration": null
+      }
+    },
+    {
+      "label": "quantum-zz-4q",
+      "status": "completed",
+      "history": "results\\experiments\\exp-20260909-131405-866bd8b4.json",
+      "runtime_seconds": 0.25960739981383085,
+      "classical": {
+        "Logistic Regression": {
+          "f1_mean": 0.9536889594176451,
+          "accuracy_mean": 0.9665735134295919,
+          "runtime_seconds": 0.09496299992315471
+        },
+        "SVM (RBF)": {
+          "f1_mean": 0.9528354978354979,
+          "accuracy_mean": 0.9648191274646793,
+          "runtime_seconds": 0.1614156998693943
+        }
+      },
+      "quantum": {
+        "available": false,
+        "reason": "Qiskit is not installed or failed to import. Classical experiments still completed.",
+        "metrics": null,
+        "configuration": null
+      }
+    },
+    {
+      "label": "quantum-zz-6q",
+      "status": "completed",
+      "history": "results\\experiments\\exp-20260909-131406-3153ef18.json",
+      "runtime_seconds": 0.2756721000187099,
+      "classical": {
+        "Logistic Regression": {
+          "f1_mean": 0.9536889594176451,
+          "accuracy_mean": 0.9665735134295919,
+          "runtime_seconds": 0.09655869984999299
+        },
+        "SVM (RBF)": {
+          "f1_mean": 0.9528354978354979,
+          "accuracy_mean": 0.9648191274646793,
+          "runtime_seconds": 0.17591030010953546
+        }
+      },
+      "quantum": {
+        "available": false,
+        "reason": "Qiskit is not installed or failed to import. Classical experiments still completed.",
+        "metrics": null,
+        "configuration": null
+      }
+    },
+    {
+      "label": "quantum-z-2q",
+      "status": "completed",
+      "history": "results\\experiments\\exp-20260909-131406-b04b47e8.json",
+      "runtime_seconds": 0.26635179994627833,
+      "classical": {
+        "Logistic Regression": {
+          "f1_mean": 0.9536889594176451,
+          "accuracy_mean": 0.9665735134295919,
+          "runtime_seconds": 0.09594040014781058
+        },
+        "SVM (RBF)": {
+          "f1_mean": 0.9528354978354979,
+          "accuracy_mean": 0.9648191274646793,
+          "runtime_seconds": 0.16697849985212088
+        }
+      },
+      "quantum": {
+        "available": false,
+        "reason": "Qiskit is not installed or failed to import. Classical experiments still completed.",
+        "metrics": null,
+        "configuration": null
+      }
+    },
+    {
+      "label": "quantum-z-4q",
+      "status": "completed",
+      "history": "results\\experiments\\exp-20260909-131406-a07d223c.json",
+      "runtime_seconds": 0.2633450999855995,
+      "classical": {
+        "Logistic Regression": {
+          "f1_mean": 0.9536889594176451,
+          "accuracy_mean": 0.9665735134295919,
+          "runtime_seconds": 0.09511060011573136
+        },
+        "SVM (RBF)": {
+          "f1_mean": 0.9528354978354979,
+          "accuracy_mean": 0.9648191274646793,
+          "runtime_seconds": 0.16496229986660182
+        }
+      },
+      "quantum": {
+        "available": false,
+        "reason": "Qiskit is not installed or failed to import. Classical experiments still completed.",
+        "metrics": null,
+        "configuration": null
+      }
+    },
+    {
+      "label": "quantum-z-6q",
+      "status": "completed",
+      "history": "results\\experiments\\exp-20260909-131406-e11f1c56.json",
+      "runtime_seconds": 0.26114509999752045,
+      "classical": {
+        "Logistic Regression": {
+          "f1_mean": 0.9536889594176451,
+          "accuracy_mean": 0.9665735134295919,
+          "runtime_seconds": 0.09422080009244382
+        },
+        "SVM (RBF)": {
+          "f1_mean": 0.9528354978354979,
+          "accuracy_mean": 0.9648191274646793,
+          "runtime_seconds": 0.1637323999311775
+        }
+      },
+      "quantum": {
+        "available": false,
+        "reason": "Qiskit is not installed or failed to import. Classical experiments still completed.",
+        "metrics": null,
+        "configuration": null
+      }
+    }
+  ],
+  "finished_at": "2026-09-09T13:14:06.904974+00:00"
+}

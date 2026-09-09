@@ -3,6 +3,7 @@ from components.theme import dataframe, disclaimer, panel, section_header, statu
 from services.experiment_service import run_experiment
 from core.evaluation import model_result_table
 from quantum.feature_maps import qiskit_available
+from core.history import build_experiment_record, save_experiment_record
 
 def render():
     section_header("Experiment lab", "Run the configured classical and quantum comparison workflow.")
@@ -45,6 +46,12 @@ def render():
                     "run_quantum": run_quantum,
                 })
                 st.session_state["experiment_result"] = result
+                try:
+                    record = build_experiment_record(result)
+                    save_experiment_record(record)
+                    st.session_state["last_experiment_id"] = record["experiment_id"]
+                except (OSError, TypeError, ValueError) as exc:
+                    st.error(f"Experiment completed, but its history could not be saved: {exc}")
                 status_badge("EXPERIMENT COMPLETED", "ok")
             except Exception as exc:
                 st.error("The experiment could not be completed. Review the dataset validation and try again.")
