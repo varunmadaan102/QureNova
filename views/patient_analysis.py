@@ -1,7 +1,12 @@
 import streamlit as st
 import pandas as pd
-from components.theme import dataframe, disclaimer, section_header, status_badge
+from components.theme import dataframe, disclaimer, panel, section_header, status_badge
 from services.prediction_service import predict_patients
+from services.patient_experience_service import (
+    get_patient_interpretation,
+    get_feature_contribution_summary,
+    get_model_calibration_summary,
+)
 from core.data import infer_target_column, load_demo_dataset
 from config.settings import RISK_THRESHOLDS
 
@@ -109,27 +114,67 @@ def render():
 
         selected = st.selectbox("Inspect patient", result["Patient"].tolist())
         row = result[result["Patient"] == selected].iloc[0]
-        left, right = st.columns(2)
-        with left:
-            st.metric("Risk category", row["Risk Category"])
-            st.metric(
-                "Model probability",
-                "Unavailable"
-                if pd.isna(row["Average Probability"])
-                else f"{row['Average Probability']:.3f}",
-            )
-            st.metric("Priority", row["Priority"])
-        with right:
-            st.metric("Prediction reliability", row["Prediction Reliability"])
-            st.metric("Model agreement", row["Model Agreement"])
-            st.caption(row["Reliability Note"])
+        
+        # Enhanced interpretation layer
+        interpretation = get_patient_interpretation(
+            row,
+            row.to_dict(),
+            reference,
+            features
+        )
+        
+        # Primary assessment
+        with panel("Patient assessment"):
+            st.write(interpretation["primary_assessment"])
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("Confidence", interpretation["confidence_level"])
+            with col2:
+                st.metric("Model agreement", interpretation["model_agreement"])
+            with col3:
+                st.metric("Reliability", row["Prediction Reliability"])
+        
+        # Reliability context
+        with panel("Reliability & context"):
+            st.write(interpretation["reliability_context"])
+            if interpretation["key_observations"]:
+                st.subheader("Key observations")
+                for obs in interpretation["key_observations"]:
+                    st.write(f"• {obs}")
+        
+        # Important caveats
+        with panel("Important caveats"):
+            for caveat in interpretation["important_caveats"]:
+                st.write(f"⚠ {caveat}")
+        
+        # Suggested next steps
+        with panel("Suggested next steps"):
+            for step in interpretation["suggested_next_steps"]:
+                st.write(f"→ {step}")
 
-        with st.expander("Model-by-model assessment", expanded=True):
+        with st.expander("Detailed metrics & model breakdown", expanded=False):
+            left, right = st.columns(2)
+            with left:
+                st.metric("Risk category", row["Risk Category"])
+                st.metric(
+                    "Model probability",
+                    "Unavailable"
+                    if pd.isna(row["Average Probability"])
+                    else f"{row['Average Probability']:.3f}",
+                )
+                st.metric("Priority", row["Priority"])
+            with right:
+                st.metric("Prediction reliability", row["Prediction Reliability"])
+                st.metric("Model confidence", row.get("Model Confidence", "N/A"))
+                st.caption(row["Reliability Note"])
+
+            st.subheader("Model-by-model assessment")
             model_columns = [
                 column for column in result.columns
                 if column.endswith(" Prediction") or column.endswith(" Probability")
             ]
             dataframe(pd.DataFrame([row[model_columns].to_dict()]))
+            
         if row["Model Agreement"] == "LOW AGREEMENT":
             st.warning(
                 "Models produced inconsistent assessments. Automated assessment "
