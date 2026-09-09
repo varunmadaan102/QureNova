@@ -11,6 +11,10 @@ from core.data import (
     validate_schema,
 )
 from core.validation import validate_dataset
+from services.dataset_intelligence_service import (
+    get_dataset_profile,
+    get_data_quality_warnings,
+)
 
 def _demo():
     return load_demo_dataset()
@@ -94,6 +98,42 @@ def render():
     if report["warnings"]:
         for warning in report["warnings"]:
             st.warning(warning)
+
+    # Dataset quality warnings
+    quality_warnings = get_data_quality_warnings(df)
+    if quality_warnings:
+        with panel("Data quality observations"):
+            for warning in quality_warnings:
+                st.warning(warning)
+
+    # Dataset profile
+    with panel("Dataset profile"):
+        profile = get_dataset_profile(df)
+        col1, col2, col3, col4 = st.columns(4)
+        with col1:
+            st.metric("Samples", profile["total_samples"])
+        with col2:
+            st.metric("Features", profile["total_features"])
+        with col3:
+            st.metric("Missing values", profile["missing_values"]["count"])
+        with col4:
+            st.metric("Duplicate rows", profile["duplicates"])
+        
+        if profile["feature_statistics"]:
+            st.subheader("Feature ranges (min, median, max)")
+            stats_data = []
+            for feat_name in profile["numeric_features"][:15]:  # Limit to first 15 for readability
+                if feat_name in profile["feature_statistics"]:
+                    stats = profile["feature_statistics"][feat_name]
+                    stats_data.append({
+                        "Feature": feat_name,
+                        "Min": f"{stats['min']:.3f}" if stats['min'] is not None else "-",
+                        "Median": f"{stats['median']:.3f}" if stats['median'] is not None else "-",
+                        "Max": f"{stats['max']:.3f}" if stats['max'] is not None else "-",
+                        "Std Dev": f"{stats['std']:.3f}" if stats['std'] is not None else "-",
+                    })
+            if stats_data:
+                dataframe(pd.DataFrame(stats_data))
 
     numeric_columns = numeric_feature_columns(df, target)
     with panel("3D feature-space orientation"):
