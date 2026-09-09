@@ -41,5 +41,8 @@ with st.sidebar:
     st.caption("v2.0.0 · local session")
     st.caption("Research prototype · not for clinical diagnosis")
 
-top_status(page.title)
+# Page.title is not populated consistently across Streamlit releases when a
+# navigation object is created from a callable. Keep the global shell robust;
+# each view provides its own precise section heading.
+top_status("QureNova research console")
 page.run()

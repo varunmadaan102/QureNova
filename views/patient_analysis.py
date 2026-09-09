@@ -3,6 +3,7 @@ import pandas as pd
 from components.theme import dataframe, disclaimer, section_header, status_badge
 from services.prediction_service import predict_patients
 from core.data import infer_target_column, load_demo_dataset
+from config.settings import RISK_THRESHOLDS
 
 def render():
     section_header("Patient analysis", "Clinician-first review of individual model outputs against the reference schema.")
@@ -87,11 +88,59 @@ def render():
         else:
             st.caption(f"Model source: {source}")
         status_badge(f"ANALYSED · {len(result)} PATIENT RECORD(S)", "ok")
-        dataframe(result)
+        st.info(
+            "Risk categories and priorities are experimental review labels based on "
+            f"probability thresholds (<{RISK_THRESHOLDS['low_upper']:.2f} low, "
+            f"<{RISK_THRESHOLDS['moderate_upper']:.2f} moderate, otherwise elevated). "
+            "They are not clinically validated thresholds."
+        )
+        display_columns = [
+            column for column in [
+                "Patient", "Risk Category", "Priority", "Average Probability",
+                "Prediction Reliability", "Model Agreement", "Model Confidence",
+            ] if column in result.columns
+        ]
+        queue = result.sort_values(
+            by=["Priority", "Average Probability"],
+            ascending=[True, False],
+            na_position="last",
+        )
+        dataframe(queue[display_columns])
 
         selected = st.selectbox("Inspect patient", result["Patient"].tolist())
         row = result[result["Patient"] == selected].iloc[0]
-        st.json(row.to_dict())
+        left, right = st.columns(2)
+        with left:
+            st.metric("Risk category", row["Risk Category"])
+            st.metric(
+                "Model probability",
+                "Unavailable"
+                if pd.isna(row["Average Probability"])
+                else f"{row['Average Probability']:.3f}",
+            )
+            st.metric("Priority", row["Priority"])
+        with right:
+            st.metric("Prediction reliability", row["Prediction Reliability"])
+            st.metric("Model agreement", row["Model Agreement"])
+            st.caption(row["Reliability Note"])
+
+        with st.expander("Model-by-model assessment", expanded=True):
+            model_columns = [
+                column for column in result.columns
+                if column.endswith(" Prediction") or column.endswith(" Probability")
+            ]
+            dataframe(pd.DataFrame([row[model_columns].to_dict()]))
+        if row["Model Agreement"] == "LOW AGREEMENT":
+            st.warning(
+                "Models produced inconsistent assessments. Automated assessment "
+                "reliability may be reduced; qualified clinical review is required."
+            )
+        if row["Prediction Reliability"] != "HIGH":
+            st.warning(
+                "The input profile differs from the reference population used for "
+                "this model. Treat the estimate as lower reliability, not as a "
+                "statement that the patient is abnormal."
+            )
 
         disclaimer("Predictions are experimental model outputs, not clinical diagnoses.")
     except ValueError as exc:

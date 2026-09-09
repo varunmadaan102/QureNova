@@ -19,7 +19,13 @@ def test_prediction_accepts_string_metadata_column():
     )
 
     assert len(result) == 1
-    assert result["Model Agreement"].iloc[0] in {"High", "Mixed"}
+    assert result["Model Agreement"].iloc[0] in {
+        "HIGH AGREEMENT",
+        "MODERATE AGREEMENT",
+        "LOW AGREEMENT",
+    }
+    assert result["Risk Category"].iloc[0] in {"LOW", "MODERATE", "ELEVATED"}
+    assert result["Prediction Reliability"].iloc[0] in {"HIGH", "MODERATE", "LOW"}
     assert len(mapping) == 2
     assert len(features) == 30
     assert source

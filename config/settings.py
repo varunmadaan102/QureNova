@@ -8,6 +8,12 @@ SUPPORTED_QUANTUM_QUBITS = [2, 4, 6]
 # bounded subset of larger datasets.
 MAX_QUANTUM_TRAIN_SAMPLES = 64
 DEFAULT_TARGET_COLUMN = "diagnosis"
+# Experimental review labels for the clinical decision-support surface. These
+# are intentionally not presented as validated medical risk cutoffs.
+RISK_THRESHOLDS = {
+    "low_upper": 0.35,
+    "moderate_upper": 0.65,
+}
 
 CLASSICAL_MODELS = [
     "Logistic Regression",
