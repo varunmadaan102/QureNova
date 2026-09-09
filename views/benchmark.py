@@ -27,10 +27,24 @@ def render():
         )
         table = pd.concat([table, pd.DataFrame([row])], ignore_index=True)
 
-    dataframe(table)
+    summary_columns = [
+        "Model",
+        "ACCURACY",
+        "BALANCED_ACCURACY",
+        "F1",
+        "ROC_AUC",
+        "SENSITIVITY",
+        "SPECIFICITY",
+        "Time (s)",
+        "Validation",
+    ]
+    visible_columns = [column for column in summary_columns if column in table.columns]
+    dataframe(table[visible_columns])
     st.caption(
-        "Sensitivity is the positive-class recall; specificity is the true-negative "
-        "rate. These are dataset evaluation metrics, not clinical guarantees. "
+        "This compact view shows mean scores for quick comparison; fold variability "
+        "remains available in the detailed experiment artifact. Sensitivity is the "
+        "positive-class recall; specificity is the true-negative rate. These are "
+        "dataset evaluation metrics, not clinical guarantees. "
         "Classical rows are cross-validation means; the bounded quantum row is a "
         "contextual holdout demonstration and must not be ranked directly against them."
     )

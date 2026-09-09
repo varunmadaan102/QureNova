@@ -2,6 +2,7 @@ import streamlit as st
 from components.theme import dataframe, disclaimer, panel, section_header, status_badge
 from services.experiment_service import run_experiment
 from core.evaluation import model_result_table
+from quantum.feature_maps import qiskit_available
 
 def render():
     section_header("Experiment lab", "Run the configured classical and quantum comparison workflow.")
@@ -17,11 +18,18 @@ def render():
         qubits = st.selectbox("Quantum PCA dimensions / qubits", [2, 4, 6], index=1)
         fmap = st.selectbox("Feature map", ["zz", "z"])
 
-    run_quantum = st.checkbox(
-        "Run experimental quantum kernel",
-        value=False,
-        help="Quantum simulation is optional and can take significantly longer than the classical baselines.",
-    )
+    if qiskit_available():
+        run_quantum = st.checkbox(
+            "Run experimental quantum kernel",
+            value=False,
+            help="Quantum simulation can take significantly longer than the classical baselines.",
+        )
+    else:
+        run_quantum = False
+        st.info(
+            "Quantum simulation is unavailable in this environment. Install the "
+            "packages listed in requirements.txt, then restart the app."
+        )
     st.caption(
         "Classical models use stratified cross-validation. Quantum simulation is "
         "opt-in because circuit-fidelity evaluation is computationally expensive."

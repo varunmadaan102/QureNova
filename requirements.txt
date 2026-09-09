@@ -5,6 +5,7 @@ scikit-learn>=1.4
 plotly>=5.20
 matplotlib>=3.8
 joblib>=1.3
-
-# Optional model/explainability/quantum integrations live in
-# requirements-optional.txt and are detected at runtime.
+xgboost>=2.0
+shap>=0.46
+qiskit>=1.2
+qiskit-machine-learning>=0.8
