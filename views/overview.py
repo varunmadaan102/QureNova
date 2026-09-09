@@ -12,7 +12,7 @@ def render():
     with panel():
         st.markdown("### A measurement-first research console")
         st.write(
-            "QureAI compares classical baselines and bounded quantum-kernel experiments "
+            "QureNova compares classical baselines and bounded quantum-kernel experiments "
             "without assuming quantum advantage. The checked-in example uses a synthetic "
             "Wisconsin-style 30-feature schema; read Guide & Methodology for the CSV "
             "contract, normalized headers, and safe interpretation boundaries."

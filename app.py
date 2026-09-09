@@ -14,7 +14,7 @@ from views import (
 )
 
 st.set_page_config(
-    page_title="QureAI",
+    page_title="QureNova",
     page_icon=":material/biotech:",
     layout="wide",
     initial_sidebar_state="expanded",

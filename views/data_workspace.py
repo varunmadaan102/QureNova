@@ -85,7 +85,7 @@ def render():
     if target is None:
         st.info("No target selected. Inspection and the feature-space orientation remain available; supervised experiments require a binary target.")
     elif df[target].nunique(dropna=True) != 2 or df[target].isna().any():
-        st.error("Selected target is not binary. QureAI v2 currently supports binary classification.")
+        st.error("Selected target is not binary. QureNova currently supports binary classification.")
     else:
         st.success(f"Binary target detected: {df[target].nunique()} classes")
 

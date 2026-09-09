@@ -1,4 +1,4 @@
-PROJECT_NAME = "QureAI"
+PROJECT_NAME = "QureNova"
 EXPERIMENT_VERSION = "2.0.0"
 
 # Canonical feature order for the checked-in 30-feature demonstration CSV.

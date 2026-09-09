@@ -13,7 +13,7 @@ def _start_here():
     with panel("Start here"):
         st.markdown(
             """
-            QureAI is an educational research prototype for tabular machine-learning
+            QureNova is an educational research prototype for tabular machine-learning
             experiments. Its checked-in example uses a synthetic Wisconsin-style
             diagnostic feature schema: 30 numeric measurements named after radius,
             texture, perimeter, area, smoothness, compactness, concavity, concave
@@ -36,7 +36,7 @@ def _jury_walkthrough():
         st.markdown(
             """
             You do not need machine-learning or medical-data experience to try
-            QureAI. Use the built-in synthetic dataset and follow this path:
+            QureNova. Use the built-in synthetic dataset and follow this path:
 
             **1. Overview** — read the project purpose and the research-only
             disclaimer.
@@ -75,7 +75,7 @@ def _jury_walkthrough():
 def render():
     section_header(
         "Guide & methodology",
-        "A practical, non-diagnostic guide to the QureAI research console.",
+        "A practical, non-diagnostic guide to the QureNova research console.",
         icon=":material/menu_book:",
     )
 
@@ -88,7 +88,7 @@ def render():
             This is a stylized 3D orientation to make the biomedical context
             approachable. It is not a scan, a patient avatar, an organ model,
             lesion localization tool, or a representation of the measurements.
-            QureAI's actual models operate on tabular numeric features, not on
+            QureNova's actual models operate on tabular numeric features, not on
             this visual object.
             """
         )
@@ -155,7 +155,7 @@ def render():
     with st.expander("Medical researcher: what to inspect", expanded=False):
         st.markdown(
             """
-            QureAI is most useful as a reproducible methods demonstration. Before
+            QureNova is most useful as a reproducible methods demonstration. Before
             interpreting a result, inspect:
 
             - **Dataset provenance:** whether the data are synthetic, retrospective,
@@ -361,7 +361,7 @@ def render():
     with panel("Research boundary"):
         st.markdown(
             """
-            Use QureAI for learning, reproducible experimentation, and model
+            Use QureNova for learning, reproducible experimentation, and model
             comparison. The synthetic Wisconsin-style schema and its benign/malignant
             labels are educational categories, not a statement about a person's
             health. This prototype has no claim about prevalence, treatment,

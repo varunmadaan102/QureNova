@@ -1,6 +1,6 @@
-# QureAI v2
+# QureNova
 
-QureAI is a research prototype for the SIH 26139 hybrid quantum machine
+QureNova is a research prototype for the SIH 26139 hybrid quantum machine
 learning platform concept. Its evidence-backed MVP compares classical
 machine-learning models and a bounded quantum-kernel QSVC workflow on
 breast-cancer-style biomedical tabular data.
@@ -87,7 +87,7 @@ calibration, subgroup performance, and external generalization before drawing
 any conclusion.
 
 Training CSVs should contain one row per record, a header row, the 30 numeric
-feature names used by `data/demo/qureai_demo_biomedical.csv`, and optionally a
+feature names used by `data/demo/qurenova_demo_biomedical.csv`, and optionally a
 binary target such as `diagnosis`. Headers may vary in case and use spaces or
 underscores; the common Wisconsin/UCI suffix style (`radius_mean`, `radius_se`,
 and `radius_worst`) is also accepted and mapped to the canonical schema.

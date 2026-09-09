@@ -24,7 +24,7 @@ def _available(module_name):
 def render():
     section_header("System status", "Runtime and artifact checks for the research prototype.")
 
-    demo_path = ROOT / "data" / "demo" / "qureai_demo_biomedical.csv"
+    demo_path = ROOT / "data" / "demo" / "qurenova_demo_biomedical.csv"
     try:
         demo = load_demo_dataset()
         demo_status = f"Ready ({len(demo)} rows × {len(demo.columns)} columns)"

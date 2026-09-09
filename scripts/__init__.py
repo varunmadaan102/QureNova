@@ -1,1 +1,1 @@
-"""Command-line utilities for QureAI."""
+"""Command-line utilities for QureNova."""

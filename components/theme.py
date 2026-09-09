@@ -1,4 +1,4 @@
-"""Shared visual system for the QureAI research console.
+"""Shared visual system for the QureNova research console.
 
 The helpers in this module are intentionally presentation-only. They do not
 read or mutate model/data state, which keeps the research workflows unchanged
@@ -203,7 +203,7 @@ def sidebar_brand():
         """
         <div class="q-brand">
           <div class="q-brand-mark">QURE / RESEARCH CONSOLE</div>
-          <div class="q-brand-name">QureAI</div>
+          <div class="q-brand-name">QureNova</div>
           <div class="q-brand-meta">hybrid ML · biomedical intelligence</div>
         </div>
         """,

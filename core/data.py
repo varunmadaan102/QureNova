@@ -155,7 +155,7 @@ def load_demo_dataset():
         Path(__file__).resolve().parents[1]
         / "data"
         / "demo"
-        / "qureai_demo_biomedical.csv"
+        / "qurenova_demo_biomedical.csv"
     )
     return clean_dataframe(pd.read_csv(path))
 
@@ -172,7 +172,7 @@ def encode_binary_target(y):
     if y.isna().any():
         raise ValueError("Target column contains blank or missing values.")
     if y.nunique(dropna=True) != 2:
-        raise ValueError("QureAI currently supports binary classification experiments.")
+        raise ValueError("QureNova currently supports binary classification experiments.")
     if not pd.api.types.is_numeric_dtype(y):
         classes = sorted(y.dropna().astype(str).unique().tolist())
         mapping = {classes[0]: 0, classes[1]: 1}

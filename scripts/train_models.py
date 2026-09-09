@@ -1,8 +1,8 @@
-"""Train and persist the classical QureAI prediction models.
+"""Train and persist the classical QureNova prediction models.
 
 Usage:
     python scripts/train_models.py
-    python scripts/train_models.py --input data/demo/qureai_demo_biomedical.csv
+    python scripts/train_models.py --input data/demo/qurenova_demo_biomedical.csv
 """
 
 from __future__ import annotations
@@ -202,7 +202,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--input",
-        default=str(ROOT / "data" / "demo" / "qureai_demo_biomedical.csv"),
+        default=str(ROOT / "data" / "demo" / "qurenova_demo_biomedical.csv"),
     )
     parser.add_argument(
         "--output-dir", default=str(ROOT / "results" / "models")

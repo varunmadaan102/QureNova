@@ -29,7 +29,7 @@ def render():
         st.markdown("""
 ### Responsible interpretation
 
-QureAI is designed to compare machine-learning approaches and surface measurable
+QureNova is designed to compare machine-learning approaches and surface measurable
 trade-offs. The synthetic Wisconsin-style feature schema and benign/malignant
 labels are educational dataset categories, not clinical validation or evidence
 about prevalence, treatment, or an individual's diagnosis. Use the Guide &
