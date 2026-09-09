@@ -9,13 +9,7 @@ from components.charts import (
 from config.constants import DEMO_FEATURE_NAMES
 
 
-def render():
-    section_header(
-        "Guide & methodology",
-        "A practical, non-diagnostic guide to the QureAI research console.",
-        icon=":material/menu_book:",
-    )
-
+def _start_here():
     with panel("Start here"):
         st.markdown(
             """
@@ -36,6 +30,8 @@ def render():
             "optionally run Experiment Lab → review Benchmark and Explainability."
         )
 
+
+def _jury_walkthrough():
     with st.expander("Jury / first-time visitor: 5-minute walkthrough", expanded=True):
         st.markdown(
             """
@@ -74,6 +70,17 @@ def render():
         disclaimer(
             "For a presentation, keep the synthetic-data label and research-only disclaimer visible."
         )
+
+
+def render():
+    section_header(
+        "Guide & methodology",
+        "A practical, non-diagnostic guide to the QureAI research console.",
+        icon=":material/menu_book:",
+    )
+
+    _start_here()
+    _jury_walkthrough()
 
     with st.expander("Interactive anatomical orientation (aesthetic only)", expanded=False):
         st.markdown(

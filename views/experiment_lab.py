@@ -12,10 +12,10 @@ def render():
         st.info("Load a dataset first in Data Workspace.")
         return
 
-    c1, c2, c3 = st.columns(3)
-    folds = c1.selectbox("CV folds", [3, 5], index=1)
-    qubits = c2.selectbox("Quantum PCA dimensions / qubits", [2, 4, 6], index=1)
-    fmap = c3.selectbox("Feature map", ["zz", "z"])
+    with st.container():
+        folds = st.selectbox("CV folds", [3, 5], index=1)
+        qubits = st.selectbox("Quantum PCA dimensions / qubits", [2, 4, 6], index=1)
+        fmap = st.selectbox("Feature map", ["zz", "z"])
 
     run_quantum = st.checkbox(
         "Run experimental quantum kernel",
@@ -39,7 +39,9 @@ def render():
                 st.session_state["experiment_result"] = result
                 status_badge("EXPERIMENT COMPLETED", "ok")
             except Exception as exc:
-                st.error(f"Experiment failed: {exc}")
+                st.error("The experiment could not be completed. Review the dataset validation and try again.")
+                with st.expander("Technical details"):
+                    st.code(str(exc), language="text")
                 return
 
     result = st.session_state.get("experiment_result")

@@ -97,4 +97,6 @@ def render():
     except ValueError as exc:
         st.error(f"Schema validation failed: {exc}")
     except Exception as exc:
-        st.error(f"Patient analysis failed: {exc}")
+        st.error("Patient analysis could not be completed. Check the input schema and try again.")
+        with st.expander("Technical details"):
+            st.code(str(exc), language="text")

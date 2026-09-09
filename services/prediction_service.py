@@ -3,6 +3,7 @@ from pathlib import Path
 import joblib
 import numpy as np
 import pandas as pd
+import streamlit as st
 
 from core.data import (
     align_features,
@@ -63,6 +64,7 @@ def _load_persisted_models(target, model_dir=None):
     return None
 
 
+@st.cache_resource(show_spinner=False)
 def train_models_for_prediction(
     reference_df,
     target,

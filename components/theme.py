@@ -91,19 +91,6 @@ html, body, [data-testid="stAppViewContainer"] {
 }
 [data-testid="stSidebar"] > div:first-child { padding-top: 1.15rem; }
 [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] { color: var(--q-text); }
-[data-testid="stSidebar"] .stRadio > div { gap: 0.22rem; }
-[data-testid="stSidebar"] .stRadio label {
-  background: rgba(15, 34, 53, 0.18); border: 1px solid transparent; border-radius: 6px;
-  color: var(--q-muted); padding: 0.32rem 0.48rem; transition: 160ms ease;
-}
-[data-testid="stSidebar"] .stRadio label:hover {
-  background: rgba(67, 217, 223, 0.07); border-color: var(--q-line); color: var(--q-cyan);
-}
-[data-testid="stSidebar"] .stRadio label:has(input:checked) {
-  background: linear-gradient(90deg, rgba(41, 183, 168, 0.18), rgba(67, 217, 223, 0.05));
-  border-color: rgba(67, 217, 223, 0.36); color: var(--q-text);
-}
-[data-testid="stSidebar"] .stRadio label:has(input:checked) p { font-weight: 600; }
 
 h1, h2, h3, h4 { font-family: "Space Grotesk", sans-serif !important; letter-spacing: -0.02em; }
 h1 { font-size: clamp(2rem, 4vw, 3.15rem) !important; font-weight: 700 !important; }
@@ -114,6 +101,7 @@ code, pre, [data-testid="stMetricValue"], [data-testid="stMetricLabel"] {
   font-family: "IBM Plex Mono", Consolas, monospace !important;
 }
 [data-testid="stCaptionContainer"] { color: var(--q-muted) !important; }
+[data-testid="stCaptionContainer"] { font-size: 0.78rem; min-height: 1.1rem; }
 
 .q-brand {
   padding: 0.65rem 0.15rem 1.1rem;
@@ -193,6 +181,14 @@ hr { border-color: var(--q-line) !important; }
   .q-topbar { align-items: flex-start; gap: 0.7rem; }
   .q-hero { padding: 1.2rem; }
 }
+@media (max-width: 480px) {
+  [data-testid="stMainBlockContainer"] { padding: 1rem 0.7rem 2.5rem; }
+  .q-topbar { flex-direction: column; align-items: flex-start; gap: 0.45rem; }
+  .q-topbar > div:last-child { text-align: left !important; }
+  .q-hero { padding: 0.95rem; }
+  .q-hero-title { font-size: 2rem; }
+  .q-hero-copy { font-size: 0.88rem; }
+}
 </style>
 """
 
@@ -226,7 +222,7 @@ def top_status(page_name):
         f"""
         <div class="q-topbar">
           <div><span class="q-kicker">active view</span><br><strong>{page_name}</strong></div>
-          <div style="text-align:right"><span class="q-badge {session_badge}">● {session_state}</span><br>
+          <div style="text-align:right"><span class="q-badge {session_badge}"><span aria-hidden="true">●</span> {session_state}</span><br>
           <span class="q-brand-meta">{dataset_state} · {experiment_state}</span></div>
         </div>
         """,
@@ -243,8 +239,10 @@ def section_header(title, description=None, icon=None):
     )
 
 
+# `hero()` is reserved for the landing page; interior views use section headers
+# so dense workflows remain scannable and task-focused.
 def hero(title, copy, kicker="HYBRID QUANTUM · BIOMEDICAL RESEARCH", chip=None):
-    chip_markup = f'<div class="q-hero-chip">✦ {chip}</div>' if chip else ""
+    chip_markup = f'<div class="q-hero-chip"><span aria-hidden="true">✦</span> {chip}</div>' if chip else ""
     st.markdown(
         f"""
         <div class="q-hero">
@@ -275,12 +273,14 @@ def panel(title=None):
 
 def metric_strip(items):
     """Render metrics as a consistent, compact horizontal strip."""
-    cols = st.columns(len(items))
-    for col, item in zip(cols, items):
-        label, value = item[:2]
-        help_text = item[2] if len(item) > 2 else None
-        with col:
-            st.metric(label, value, help=help_text, border=True)
+    for start in range(0, len(items), 2):
+        row = items[start : start + 2]
+        cols = st.columns(len(row))
+        for col, item in zip(cols, row):
+            label, value = item[:2]
+            help_text = item[2] if len(item) > 2 else None
+            with col:
+                st.metric(label, value, help=help_text, border=True)
 
 
 def dataframe(frame, **kwargs):

@@ -29,6 +29,7 @@ def render():
 
     with panel("Kernel similarity matrix"):
         st.plotly_chart(kernel_heatmap(q["kernel_preview"]))
+        st.caption("Brighter cells indicate higher simulated feature-map similarity between bounded quantum-kernel samples.")
 
     with panel("Kernel diagnostics"):
         st.json(q["kernel_diagnostics"])

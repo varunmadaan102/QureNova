@@ -126,6 +126,7 @@ def render():
                         width="stretch",
                         config={"displaylogo": False},
                     )
+                    st.caption("The 3D projection shows mathematical similarity in selected numeric features; it is not anatomy or a clinical result.")
                 except ValueError as exc:
                     st.warning(f"Feature-space view unavailable: {exc}")
     disclaimer("The feature-space chart is an educational orientation of tabular values; it does not depict anatomy or establish clinical evidence.")

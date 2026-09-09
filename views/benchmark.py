@@ -37,9 +37,11 @@ def render():
 
     with panel("Cross-validation performance"):
         st.plotly_chart(benchmark_bar(classical))
+        st.caption("Bars show mean cross-validation F1; error bars show fold-to-fold variation.")
 
     with panel("F1 stability"):
         st.plotly_chart(stability_chart(classical))
+        st.caption("This stability view compares the distribution of fold-level F1 scores across classical models.")
 
     best = max(
         classical.items(),

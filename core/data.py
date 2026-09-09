@@ -3,6 +3,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import streamlit as st
 
 def clean_dataframe(df):
     if not isinstance(df, pd.DataFrame):
@@ -147,6 +148,7 @@ def align_features(df, feature_names, allow_extra=True, return_report=False):
     return (aligned, report) if return_report else aligned
 
 
+@st.cache_data(show_spinner=False)
 def load_demo_dataset():
     """Load the checked-in 30-feature demo dataset used throughout the app."""
     path = (

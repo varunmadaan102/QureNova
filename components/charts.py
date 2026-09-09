@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
+import streamlit as st
 from sklearn.decomposition import PCA
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler
@@ -220,6 +221,7 @@ def kernel_heatmap(matrix):
     )
 
 
+@st.cache_data(show_spinner=False)
 def feature_space_figure(
     frame,
     target_column=None,
