@@ -36,9 +36,14 @@ def render():
         "opt-in because circuit-fidelity evaluation is computationally expensive."
     )
 
-    if st.button("Run Experiment", type="primary"):
-        with st.spinner("Running classical and quantum experiments..."):
-            try:
+    run_in_progress = bool(st.session_state.get("run_in_progress", False))
+
+    if st.button("Run Experiment", type="primary", disabled=run_in_progress):
+        st.session_state["run_in_progress"] = True
+        try:
+            with st.spinner("Running classical and quantum experiments..."):
+                if run_quantum:
+                    st.info("Quantum kernel computation takes 30-60 seconds. The app is working - please wait.")
                 result = run_experiment(df, target, {
                     "cv_folds": folds,
                     "quantum_qubits": qubits,
@@ -53,11 +58,13 @@ def render():
                 except (OSError, TypeError, ValueError) as exc:
                     st.error(f"Experiment completed, but its history could not be saved: {exc}")
                 status_badge("EXPERIMENT COMPLETED", "ok")
-            except Exception as exc:
-                st.error("The experiment could not be completed. Review the dataset validation and try again.")
-                with st.expander("Technical details"):
-                    st.code(str(exc), language="text")
-                return
+        except Exception as exc:
+            st.error("The experiment could not be completed. Review the dataset validation and try again.")
+            with st.expander("Technical details"):
+                st.code(str(exc), language="text")
+            return
+        finally:
+            st.session_state["run_in_progress"] = False
 
     result = st.session_state.get("experiment_result")
     if result:

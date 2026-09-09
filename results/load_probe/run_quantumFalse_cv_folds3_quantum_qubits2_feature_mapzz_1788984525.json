@@ -1,0 +1,297 @@
+{
+  "config": {
+    "run_quantum": false,
+    "cv_folds": 3,
+    "quantum_qubits": 2,
+    "feature_map": "zz"
+  },
+  "iterations": 1,
+  "dataset": {
+    "rows": 569
+  },
+  "probe": {
+    "script": "scripts/nondeterminism_load_probe.py",
+    "root": "C:\\Users\\varun\\College\\Projects\\qurenova"
+  },
+  "results": [
+    {
+      "iteration_index": 0,
+      "ok": true,
+      "success": true,
+      "runtime_seconds": 0.2385175998788327,
+      "output": {
+        "metadata": {
+          "experiment_version": "2.0.0",
+          "runtime_seconds": 0.20562299992889166,
+          "target_column": "diagnosis",
+          "target_mapping": {
+            "B": 0,
+            "M": 1
+          },
+          "platform_scope": "Breast-cancer tabular MVP; dataset profiles can be extended"
+        },
+        "dataset": {
+          "rows": 569,
+          "features": 30,
+          "feature_names": [
+            "mean radius",
+            "mean texture",
+            "mean perimeter",
+            "mean area",
+            "mean smoothness",
+            "mean compactness",
+            "mean concavity",
+            "mean concave points",
+            "mean symmetry",
+            "mean fractal dimension",
+            "radius error",
+            "texture error",
+            "perimeter error",
+            "area error",
+            "smoothness error",
+            "compactness error",
+            "concavity error",
+            "concave points error",
+            "symmetry error",
+            "fractal dimension error",
+            "worst radius",
+            "worst texture",
+            "worst perimeter",
+            "worst area",
+            "worst smoothness",
+            "worst compactness",
+            "worst concavity",
+            "worst concave points",
+            "worst symmetry",
+            "worst fractal dimension"
+          ],
+          "class_distribution": {
+            "B": 357,
+            "M": 212
+          }
+        },
+        "validation": {
+          "valid": true,
+          "missing_features": [],
+          "extra_features": [],
+          "invalid_numeric_features": [],
+          "duplicate_columns": [],
+          "warnings": [],
+          "errors": [],
+          "rows": 569,
+          "columns": 31,
+          "missing_cells": 0
+        },
+        "preprocessing": {
+          "pipeline": "Fold-fitted median imputation → StandardScaler → PCA",
+          "pca_components": 4,
+          "fit_scope": "Each CV training fold",
+          "feature_selection": "Canonical validated feature set"
+        },
+        "classical_results": {
+          "Logistic Regression": {
+            "fold_metrics": [
+              {
+                "accuracy": 0.9736842105263158,
+                "balanced_accuracy": 0.9733104509409398,
+                "precision": 0.9583333333333334,
+                "recall": 0.971830985915493,
+                "sensitivity": 0.971830985915493,
+                "specificity": 0.9747899159663865,
+                "f1": 0.965034965034965,
+                "roc_auc": 0.9976328559592852
+              },
+              {
+                "accuracy": 0.9578947368421052,
+                "balanced_accuracy": 0.9465025446798438,
+                "precision": 0.9846153846153847,
+                "recall": 0.9014084507042254,
+                "sensitivity": 0.9014084507042254,
+                "specificity": 0.9915966386554622,
+                "f1": 0.9411764705882353,
+                "roc_auc": 0.9910048526452835
+              },
+              {
+                "accuracy": 0.9576719576719577,
+                "balanced_accuracy": 0.9487394957983193,
+                "precision": 0.9696969696969697,
+                "recall": 0.9142857142857143,
+                "sensitivity": 0.9142857142857143,
+                "specificity": 0.9831932773109243,
+                "f1": 0.9411764705882353,
+                "roc_auc": 0.9894357743097238
+              }
+            ],
+            "summary": {
+              "accuracy": {
+                "mean": 0.9630836350134596,
+                "std": 0.007496290573454243
+              },
+              "balanced_accuracy": {
+                "mean": 0.9561841638063676,
+                "std": 0.012144498640357597
+              },
+              "precision": {
+                "mean": 0.970881895881896,
+                "std": 0.010762267185120626
+              },
+              "recall": {
+                "mean": 0.9291750503018109,
+                "std": 0.03061701718157982
+              },
+              "sensitivity": {
+                "mean": 0.9291750503018109,
+                "std": 0.03061701718157982
+              },
+              "specificity": {
+                "mean": 0.9831932773109244,
+                "std": 0.006861315806115366
+              },
+              "f1": {
+                "mean": 0.9491293020704785,
+                "std": 0.011247002141456115
+              },
+              "roc_auc": {
+                "mean": 0.9926911609714307,
+                "std": 0.0035525355940529066
+              }
+            },
+            "timing_seconds": 0.10250719985924661,
+            "validation": "Stratified 3-fold CV",
+            "confusion_matrix": [
+              [
+                351,
+                6
+              ],
+              [
+                15,
+                197
+              ]
+            ]
+          },
+          "SVM (RBF)": {
+            "fold_metrics": [
+              {
+                "accuracy": 0.968421052631579,
+                "balanced_accuracy": 0.9747899159663865,
+                "precision": 0.922077922077922,
+                "recall": 1.0,
+                "sensitivity": 1.0,
+                "specificity": 0.9495798319327731,
+                "f1": 0.9594594594594594,
+                "roc_auc": 0.9984613563735354
+              },
+              {
+                "accuracy": 0.9736842105263158,
+                "balanced_accuracy": 0.9647887323943662,
+                "precision": 1.0,
+                "recall": 0.9295774647887324,
+                "sensitivity": 0.9295774647887324,
+                "specificity": 1.0,
+                "f1": 0.9635036496350365,
+                "roc_auc": 0.9913599242513907
+              },
+              {
+                "accuracy": 0.9576719576719577,
+                "balanced_accuracy": 0.9575630252100841,
+                "precision": 0.9305555555555556,
+                "recall": 0.9571428571428572,
+                "sensitivity": 0.9571428571428572,
+                "specificity": 0.957983193277311,
+                "f1": 0.9436619718309859,
+                "roc_auc": 0.9835534213685474
+              }
+            ],
+            "summary": {
+              "accuracy": {
+                "mean": 0.9665924069432842,
+                "std": 0.006663633601270132
+              },
+              "balanced_accuracy": {
+                "mean": 0.965713891190279,
+                "std": 0.0070632089204381585
+              },
+              "precision": {
+                "mean": 0.9508778258778259,
+                "std": 0.03490662363327021
+              },
+              "recall": {
+                "mean": 0.9622401073105299,
+                "std": 0.028974929805488013
+              },
+              "sensitivity": {
+                "mean": 0.9622401073105299,
+                "std": 0.028974929805488013
+              },
+              "specificity": {
+                "mean": 0.969187675070028,
+                "std": 0.022056044465019083
+              },
+              "f1": {
+                "mean": 0.9555416936418273,
+                "std": 0.008560946648250778
+              },
+              "roc_auc": {
+                "mean": 0.9911249006644911,
+                "std": 0.006088407487076618
+              }
+            },
+            "timing_seconds": 0.10053809988312423,
+            "validation": "Stratified 3-fold CV",
+            "confusion_matrix": [
+              [
+                346,
+                11
+              ],
+              [
+                8,
+                204
+              ]
+            ]
+          }
+        },
+        "quantum_results": {
+          "available": false,
+          "status": "not_run",
+          "reason": "Quantum simulation was not run. Enable 'Run experimental quantum kernel' to execute the optional, slower Qiskit workflow."
+        },
+        "artifacts": {
+          "feature_names": [
+            "mean radius",
+            "mean texture",
+            "mean perimeter",
+            "mean area",
+            "mean smoothness",
+            "mean compactness",
+            "mean concavity",
+            "mean concave points",
+            "mean symmetry",
+            "mean fractal dimension",
+            "radius error",
+            "texture error",
+            "perimeter error",
+            "area error",
+            "smoothness error",
+            "compactness error",
+            "concavity error",
+            "concave points error",
+            "symmetry error",
+            "fractal dimension error",
+            "worst radius",
+            "worst texture",
+            "worst perimeter",
+            "worst area",
+            "worst smoothness",
+            "worst compactness",
+            "worst concavity",
+            "worst concave points",
+            "worst symmetry",
+            "worst fractal dimension"
+          ],
+          "reference_df": "     mean radius  mean texture  ...  worst symmetry  worst fractal dimension\n0      20.318326     27.062524  ...        0.316283                 0.079797\n1      15.346348     22.295161  ...        0.315103                 0.097622\n2      19.422459     18.380198  ...        0.363766                 0.077580\n3      17.585416     15.002816  ...        0.279019                 0.079165\n4      18.227681     18.901315  ...        0.282463                 0.081249\n..           ...           ...  ...             ...                      ...\n564    14.350978     24.970111  ...        0.317392                 0.102530\n565    11.151500     14.750792  ...        0.284593                 0.073370\n566    17.992549     16.166363  ...        0.375615                 0.110761\n567    10.377261     12.106243  ...        0.295710                 0.077556\n568    15.512970     17.167834  ...        0.325131                 0.119058\n\n[569 rows x 30 columns]"
+        }
+      },
+      "error": null
+    }
+  ]
+}

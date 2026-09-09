@@ -65,6 +65,38 @@ def _classical_cv(X, y, folds, random_state, pca_components=None):
         }
     return results
 
+def _classical_pca_cv(X, y, folds, random_state, pca_components):
+    """Classical models with PCA - control for quantum kernel comparison."""
+    results = {}
+    splitter = StratifiedKFold(n_splits=folds, shuffle=True, random_state=random_state)
+
+    for name, base_model in build_classical_models(random_state).items():
+        fold_metrics, all_true, all_pred = [], [], []
+        started = time.perf_counter()
+
+        for train_idx, test_idx in splitter.split(X, y):
+            preprocessor = build_preprocessor(pca_components)
+            X_train_source = X.iloc[train_idx] if hasattr(X, "iloc") else X[train_idx]
+            X_test_source = X.iloc[test_idx] if hasattr(X, "iloc") else X[test_idx]
+            X_train = preprocessor.fit_transform(X_train_source)
+            X_test = preprocessor.transform(X_test_source)
+            model = clone(base_model)
+            model.fit(X_train, y[train_idx])
+            pred = model.predict(X_test)
+            score = _score(model, X_test)
+            fold_metrics.append(evaluate_predictions(y[test_idx], pred, score))
+            all_true.extend(y[test_idx].tolist())
+            all_pred.extend(pred.tolist())
+
+        results[name] = {
+            "fold_metrics": fold_metrics,
+            "summary": summarize_fold_metrics(fold_metrics),
+            "timing_seconds": time.perf_counter() - started,
+            "validation": f"Stratified {folds}-fold CV (with PCA control)",
+            "confusion_matrix": build_confusion(all_true, all_pred),
+        }
+    return results
+
 def _quantum_holdout(X, y, qubits, feature_map):
     if not qiskit_available():
         return {
@@ -108,6 +140,17 @@ def _quantum_holdout(X, y, qubits, feature_map):
     metrics = evaluate_predictions(y_test, pred, score)
     alignment = kernel_target_alignment(train_kernel, y_train)
 
+    circuit_text = None
+    circuit_reason = None
+    try:
+        circuit_text = str(circuit.draw(output="text"))
+        if len(circuit_text) > 50000:
+            circuit_reason = f"Circuit text rendering exceeded max length (50000 chars)."
+            circuit_text = None
+    except Exception as e:
+        circuit_reason = f"Circuit text rendering failed: {type(e).__name__}: {e}"
+        circuit_text = None
+
     return {
         "available": True,
         "configuration": {
@@ -125,7 +168,8 @@ def _quantum_holdout(X, y, qubits, feature_map):
         "kernel_target_alignment": alignment,
         "confusion_matrix": build_confusion(y_test, pred),
         "kernel_preview": train_kernel[:30, :30].tolist(),
-        "circuit": str(circuit.draw(output="text")),
+        "circuit": circuit_text,
+        "circuit_reason": circuit_reason,
     }
 
 
@@ -181,6 +225,14 @@ def run_experiment(df, target_column=None, config=None):
         y.to_numpy(),
         folds,
         RANDOM_STATE,
+        pca_components=None,
+    )
+
+    classical_pca = _classical_pca_cv(
+        X,
+        y.to_numpy(),
+        folds,
+        RANDOM_STATE,
         pca_components=pca_components,
     )
 
@@ -213,12 +265,13 @@ def run_experiment(df, target_column=None, config=None):
         },
         "validation": validation,
         "preprocessing": {
-            "pipeline": "Fold-fitted median imputation → StandardScaler → PCA",
+            "pipeline": "Fold-fitted median imputation → StandardScaler (classical); StandardScaler → PCA (quantum)",
             "pca_components": pca_components,
             "fit_scope": "Each CV training fold",
             "feature_selection": "Canonical validated feature set",
         },
         "classical_results": classical,
+        "classical_pca_results": classical_pca,
         "quantum_results": quantum,
         "artifacts": {
             "feature_names": feature_names,
