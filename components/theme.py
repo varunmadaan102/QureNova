@@ -202,7 +202,7 @@ def sidebar_brand():
     st.markdown(
         """
         <div class="q-brand">
-          <div class="q-brand-mark">QURE / RESEARCH CONSOLE</div>
+          <div class="q-brand-mark">QURENOVA / RESEARCH CONSOLE</div>
           <div class="q-brand-name">QureNova</div>
           <div class="q-brand-meta">hybrid ML · biomedical intelligence</div>
         </div>
