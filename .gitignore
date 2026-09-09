@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.py[cod]
+.env
+*.docx
+*.pdf
+reports/
+private/
+uploads/
+results/models/*.joblib
+results/models/*.json
+results/kernels/*
+results/figures/*
+!results/models/.gitkeep
+!results/kernels/.gitkeep
+!results/figures/.gitkeep
