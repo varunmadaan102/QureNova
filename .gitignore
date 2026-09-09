@@ -4,6 +4,9 @@ __pycache__/
 .env
 *.docx
 *.pdf
+QURENOVA_AI_HANDOFF.md
+QURENOVA_MODEL_VALIDATION.md
+QURENOVA_DEPLOYMENT_STATUS.md
 reports/
 private/
 uploads/
