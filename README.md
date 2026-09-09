@@ -1,9 +1,10 @@
 # QureNova
 
-QureNova is a research prototype for the SIH 26139 hybrid quantum machine
-learning platform concept. Its evidence-backed MVP compares classical
-machine-learning models and a bounded quantum-kernel QSVC workflow on
-breast-cancer-style biomedical tabular data.
+**A credible research console for hybrid quantum machine learning.**
+
+QureNova is a measurement-first workspace designed for researchers, students, and juries to understand whether and where quantum machine learning can add value in biomedical applications. Rather than marketing quantum advantage, QureNova answers a harder question honestly: **WHERE, IF ANYWHERE, CAN QUANTUM MACHINE LEARNING ADD VALUE?**
+
+The platform compares classical machine-learning baselines (Logistic Regression, SVM, XGBoost) against a bounded quantum-kernel QSVC workflow on breast-cancer-style biomedical tabular data, with transparent protocol labeling, fair benchmarking, dataset intelligence, patient-first interpretation, and explicit research boundaries.
 
 ## Quick start
 
@@ -44,18 +45,109 @@ deliberately opt-in and is not required for startup or for the default jury
 walkthrough. `requirements-optional.txt` remains available for environments
 that intentionally want to layer those integrations separately.
 
+## Core Principles
+
+**Quantum is measured, not marketed.** QureNova displays results honestly regardless of outcome. If classical outperforms quantum, that's stated clearly. The platform answers whether quantum helps this specific problem, not whether quantum is inherently better.
+
+**Transparency over confidence.** Every prediction includes reliability context, model agreement signals, and important caveats. The system never claims certainty it doesn't have.
+
+**Separate model evidence from clinical interpretation.** What the algorithm predicts (model evidence) is distinct from what that prediction means in clinical context (human interpretation). Both are presented, neither is conflated.
+
+**Distinguish simulation from hardware.** Quantum operations run on Qiskit simulators, not real QPU. The platform is explicit about this boundary and makes no claims about real hardware performance.
+
+**Never fabricate clinical claims.** No "99% accuracy on breast cancer." Instead: "This is a research estimate from classifiers trained on synthetic reference data. Use only with external clinical validation."
+
 ## Workflow
 
-CSV → validation → preprocessing → stratified cross-validation → classical models + QSVC → benchmark → patient prediction → explainability.
+**CSV → Validation → Preprocessing → Fair Comparison → Patient Analysis → Explainability**
 
-Patient Analysis adds a clinician-oriented review queue without presenting a
-diagnosis: each row receives an experimental LOW/MODERATE/ELEVATED review label,
-a HIGH/MEDIUM/ROUTINE priority, model-agreement status, and an input-reliability
-signal. Reliability compares the row with the reference training population
-using a robust standardized distance and is intended to flag distribution shift,
-not to identify a medical abnormality. The thresholds and messages are
-centralized in `config/settings.py` and must be recalibrated and externally
-validated before any clinical use.
+1. **Data Workspace:** Load or upload a CSV with 30 numeric diagnostic features and an optional binary target. Inspect schema, missing values, duplicates, and feature ranges. View a 3D feature-space orientation.
+
+2. **Experiment Lab:** Configure and run a controlled experiment comparing:
+   - Classical baseline (5-fold cross-validation, no PCA)
+   - Classical + PCA (control experiment to isolate PCA effects)
+   - Quantum kernel QSVC (holdout 80/20 split for kernel complexity)
+   
+   Protocol differences (cross-validation vs. holdout) are explicitly labeled—results are not rank-comparable without accounting for this difference.
+
+3. **Benchmark:** View fair comparison results with:
+   - Unified metrics table (accuracy, balanced accuracy, precision, recall, F1, ROC-AUC)
+   - Protocol transparency banner explaining why classical and quantum use different evaluation methods
+   - PCA effect analysis showing whether classical gains come from dimensionality reduction or better baseline
+   - Quantum vs. classical narrative: honest assessment of where quantum performed well or poorly
+
+4. **Patient Analysis:** Upload compatible patient rows for individual predictions. Each prediction shows:
+   - Primary assessment (algorithm output in plain language)
+   - Confidence level (based on probability distance + model agreement)
+   - Reliability context (how this patient differs from reference population)
+   - Important caveats (limitations and disclaimers)
+   - Suggested next steps (research or clinical actions)
+   
+   All predictions are experimental estimates, never diagnoses or treatment recommendations.
+
+5. **Explainability:** Explore model behavior through:
+   - Global feature importance (SHAP values or tree importance)
+   - Per-patient feature contributions (linear model coefficients or tree paths)
+   - Boundary cases and model agreement patterns
+
+## Fair Benchmarking & Scientific Integrity (Phase 1)
+
+QureNova implements a 3-way experimental comparison to isolate quantum effects:
+
+- **Classical (no PCA):** Logistic Regression, SVM, XGBoost with standard preprocessing. 5-fold stratified cross-validation.
+- **Classical + PCA:** Same classical models with optional PCA for dimensionality reduction. Helps quantify whether classical gains come from better baselines or dimensionality reduction.
+- **Quantum (QSVC):** Qiskit fidelity quantum kernel with QSVC classifier. Holdout 80/20 split (different protocol due to quantum circuit complexity).
+
+Protocol differences are **explicitly labeled** on the Benchmark view. Classical models use cross-validation; quantum uses holdout. Results cannot be directly ranked by accuracy—the evaluation methods differ.
+
+The comparison narrative (`comparison_service.py`) generates honest assessments:
+- If classical outperforms: "Classical baselines outperformed the evaluated quantum kernel configuration. This demonstrates why rigorous benchmarking is essential."
+- If quantum performs better: "Quantum kernel showed measurable advantage on this configuration. This warrants further investigation with independent validation."
+- If results are mixed: "Model agreement is mixed. No clear superiority emerges on this dataset."
+
+## Dataset Transparency (Phase 2)
+
+Data Workspace now displays comprehensive dataset intelligence:
+
+- **Dataset profile:** Sample count, feature count, missing values, duplicates
+- **Feature statistics:** Min, median, max, standard deviation for each numeric feature
+- **Data quality warnings:** Alerts for sparse features, highly correlated columns, potential data drift
+- **Preprocessing context:** What transformations will be applied to user data
+
+This supports the principle that users should understand exactly what data is being trained on and how it's being prepared, **before** running experiments.
+
+## Patient-First Interpretation (Phase 3)
+
+Patient Analysis separates **model evidence** from **clinical interpretation**:
+
+- **Model evidence:** What the algorithm predicts (probability, prediction class, model agreement)
+- **Clinical interpretation:** What that prediction means in context (reliability, caveats, suggested actions)
+
+Each patient receives:
+- **Primary assessment** in plain language (not just a probability)
+- **Confidence level** (High/Moderate/Low based on probability distance + model agreement)
+- **Reliability context** (how this patient's profile differs from reference population)
+- **Key observations** (notable patient characteristics vs. reference)
+- **Important caveats** (limitations, disclaimers, research boundaries)
+- **Suggested next steps** (recommended clinical or research actions)
+
+This design ensures clinicians and researchers understand both what the model says and why they should (or shouldn't) trust it.
+
+## UX Polish (Phase 4)
+
+QureNova provides a consistent, legible research workflow:
+
+- **Navigation components:** Consistent page headers, breadcrumb trails, workflow checkpoints
+- **Error handling:** Structured validation errors with clear guidance and recovery suggestions
+- **Feedback:** Operation status, loading states, data quality warnings, prediction reliability context
+- **Workflow context:** Data status panel reminds users of current dataset, target, and experiment state on all pages
+
+## QA & Documentation (Phase 5)
+
+- **Test coverage:** 11 comprehensive tests covering data contracts, evaluation, clinical labels, experiment persistence, patient analysis, and visuals
+- **Explicit disclaimers:** Research boundaries and non-diagnostic statements appear on every relevant page
+- **Methodology documentation:** Guide & Methodology page explains schema, header normalization, preprocessing, model terms, and safe interpretation boundaries
+- **Reproducible workflow:** Built-in demo flow (5 min) for presentations and jury walkthroughs
 
 ## SIH 26139 alignment
 
