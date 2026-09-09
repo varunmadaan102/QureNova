@@ -26,7 +26,6 @@ COLORS = {
     "red": "#f17b83",
 }
 
-
 PLOTLY_TEMPLATE = go.layout.Template(
     layout=go.Layout(
         paper_bgcolor=COLORS["navy"],
@@ -85,14 +84,26 @@ html, body, [data-testid="stAppViewContainer"] {
   background-size: 32px 32px;
 }
 [data-testid="stHeader"] { background: rgba(7, 17, 31, 0.82) !important; }
-[data-testid="stMainBlockContainer"] { max-width: 1480px; padding-top: 2.25rem; }
+[data-testid="stMainBlockContainer"] { max-width: 1480px; padding: 2.15rem 2.25rem 4rem; }
 [data-testid="stSidebar"] {
   background: linear-gradient(180deg, #091827 0%, #07111f 100%) !important;
   border-right: 1px solid var(--q-line);
 }
+[data-testid="stSidebar"] > div:first-child { padding-top: 1.15rem; }
 [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] { color: var(--q-text); }
-[data-testid="stSidebar"] .stRadio label { color: var(--q-muted); }
-[data-testid="stSidebar"] .stRadio label:hover { color: var(--q-cyan); }
+[data-testid="stSidebar"] .stRadio > div { gap: 0.22rem; }
+[data-testid="stSidebar"] .stRadio label {
+  background: rgba(15, 34, 53, 0.18); border: 1px solid transparent; border-radius: 6px;
+  color: var(--q-muted); padding: 0.32rem 0.48rem; transition: 160ms ease;
+}
+[data-testid="stSidebar"] .stRadio label:hover {
+  background: rgba(67, 217, 223, 0.07); border-color: var(--q-line); color: var(--q-cyan);
+}
+[data-testid="stSidebar"] .stRadio label:has(input:checked) {
+  background: linear-gradient(90deg, rgba(41, 183, 168, 0.18), rgba(67, 217, 223, 0.05));
+  border-color: rgba(67, 217, 223, 0.36); color: var(--q-text);
+}
+[data-testid="stSidebar"] .stRadio label:has(input:checked) p { font-weight: 600; }
 
 h1, h2, h3, h4 { font-family: "Space Grotesk", sans-serif !important; letter-spacing: -0.02em; }
 h1 { font-size: clamp(2rem, 4vw, 3.15rem) !important; font-weight: 700 !important; }
@@ -114,7 +125,7 @@ code, pre, [data-testid="stMetricValue"], [data-testid="stMetricLabel"] {
 .q-brand-meta { color: var(--q-muted); font: 400 0.72rem "IBM Plex Mono", monospace; }
 .q-topbar {
   align-items: center; border-bottom: 1px solid var(--q-line); display: flex;
-  justify-content: space-between; margin: -0.8rem 0 1.6rem; padding: 0 0 0.8rem;
+  justify-content: space-between; margin: -0.85rem 0 2rem; padding: 0 0 0.9rem;
 }
 .q-kicker { color: var(--q-cyan); font: 600 0.68rem "IBM Plex Mono", monospace; letter-spacing: 0.16em; text-transform: uppercase; }
 .q-section { border-left: 2px solid var(--q-cyan); margin: 1.65rem 0 0.8rem; padding-left: 0.75rem; }
@@ -122,9 +133,27 @@ code, pre, [data-testid="stMetricValue"], [data-testid="stMetricLabel"] {
 .q-section p { color: var(--q-muted); font: 0.76rem "IBM Plex Mono", monospace; margin: 0.25rem 0 0; }
 .q-panel {
   background: rgba(15, 34, 53, 0.88); border: 1px solid var(--q-line);
-  border-radius: 3px; padding: 1rem 1.05rem; margin: 0.55rem 0 1rem;
+  border-radius: 8px; box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12);
+  padding: 1.1rem 1.15rem; margin: 0.55rem 0 1rem;
 }
 .q-panel-title { color: var(--q-text); font: 600 0.76rem "IBM Plex Mono", monospace; letter-spacing: 0.08em; text-transform: uppercase; }
+.q-hero {
+  background:
+    radial-gradient(circle at 88% 15%, rgba(67, 217, 223, 0.16), transparent 30%),
+    linear-gradient(135deg, rgba(18, 43, 66, 0.98), rgba(9, 24, 39, 0.98));
+  border: 1px solid rgba(67, 217, 223, 0.28); border-radius: 14px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18); margin: 0 0 1.3rem;
+  overflow: hidden; padding: 1.5rem 1.6rem; position: relative;
+}
+.q-hero::after {
+  border: 1px solid rgba(67, 217, 223, 0.14); border-radius: 50%;
+  content: ""; height: 240px; position: absolute; right: -80px; top: -100px; width: 240px;
+}
+.q-hero-kicker { color: var(--q-cyan); font: 600 0.68rem "IBM Plex Mono", monospace; letter-spacing: 0.18em; text-transform: uppercase; }
+.q-hero-title { color: var(--q-text); font: 700 clamp(2.1rem, 4vw, 3.8rem) "Space Grotesk", sans-serif; letter-spacing: -0.055em; line-height: 0.98; margin: 0.45rem 0 0.75rem; max-width: 700px; }
+.q-hero-copy { color: #b9ced8; font: 400 0.96rem/1.55 "Space Grotesk", sans-serif; max-width: 700px; }
+.q-hero-chip { color: #b7f5f0; display: inline-block; font: 600 0.68rem "IBM Plex Mono", monospace; margin-top: 0.8rem; }
+.q-divider { background: linear-gradient(90deg, var(--q-cyan), transparent); height: 1px; margin: 1.6rem 0; opacity: 0.5; }
 .q-badge {
   border: 1px solid var(--q-line); border-radius: 999px; display: inline-flex;
   font: 600 0.68rem "IBM Plex Mono", monospace; letter-spacing: 0.04em; padding: 0.26rem 0.58rem;
@@ -147,14 +176,23 @@ div[data-testid="stMetric"], [data-testid="stVerticalBlockBorderWrapper"] {
 [data-testid="stMetricLabel"] { color: var(--q-muted) !important; font-size: 0.7rem !important; letter-spacing: 0.04em; text-transform: uppercase; }
 [data-testid="stMetricValue"] { color: var(--q-cyan) !important; font-size: 1.4rem !important; }
 button, [data-baseweb="select"] > div, input, textarea {
-  border-radius: 3px !important; border-color: var(--q-line) !important;
+  border-radius: 6px !important; border-color: var(--q-line) !important;
 }
-button[kind="primary"] { background: var(--q-teal) !important; color: #041018 !important; }
-button:hover { border-color: var(--q-cyan) !important; color: var(--q-cyan) !important; }
+button[kind="primary"] {
+  background: linear-gradient(135deg, var(--q-teal), #43d9df) !important;
+  box-shadow: 0 8px 20px rgba(41, 183, 168, 0.18); color: #041018 !important;
+  font-weight: 700 !important;
+}
+button:hover { border-color: var(--q-cyan) !important; color: var(--q-cyan) !important; transform: translateY(-1px); }
 [data-testid="stAlert"] { background: rgba(15, 34, 53, 0.92); border-radius: 3px; }
 [data-testid="stDataFrame"], [data-testid="stTable"] { border: 1px solid var(--q-line); border-radius: 3px; overflow: hidden; }
 pre, [data-testid="stCodeBlock"] { background: #06101c !important; border: 1px solid var(--q-line); border-radius: 3px !important; }
 hr { border-color: var(--q-line) !important; }
+@media (max-width: 800px) {
+  [data-testid="stMainBlockContainer"] { padding: 1.4rem 1rem 3rem; }
+  .q-topbar { align-items: flex-start; gap: 0.7rem; }
+  .q-hero { padding: 1.2rem; }
+}
 </style>
 """
 
@@ -170,7 +208,7 @@ def sidebar_brand():
         <div class="q-brand">
           <div class="q-brand-mark">QURE / RESEARCH CONSOLE</div>
           <div class="q-brand-name">QureAI</div>
-          <div class="q-brand-meta">hybrid ML · biomedical classification</div>
+          <div class="q-brand-meta">hybrid ML · biomedical intelligence</div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -201,6 +239,21 @@ def section_header(title, description=None, icon=None):
     detail = f"<p>{description}</p>" if description else ""
     st.markdown(
         f'<div class="q-section"><h2>{icon_text}{title}</h2>{detail}</div>',
+        unsafe_allow_html=True,
+    )
+
+
+def hero(title, copy, kicker="HYBRID QUANTUM · BIOMEDICAL RESEARCH", chip=None):
+    chip_markup = f'<div class="q-hero-chip">✦ {chip}</div>' if chip else ""
+    st.markdown(
+        f"""
+        <div class="q-hero">
+          <div class="q-hero-kicker">{kicker}</div>
+          <div class="q-hero-title">{title}</div>
+          <div class="q-hero-copy">{copy}</div>
+          {chip_markup}
+        </div>
+        """,
         unsafe_allow_html=True,
     )
 

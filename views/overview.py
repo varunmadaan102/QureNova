@@ -1,12 +1,13 @@
 import streamlit as st
-from components.theme import disclaimer, metric_strip, panel, section_header, status_badge
+from components.theme import disclaimer, hero, metric_strip, panel, section_header, status_badge
 from components.pipeline import pipeline
 from config.settings import CLASSICAL_MODELS
 
 def render():
-    section_header(
-        "Overview",
-        "A guided, non-diagnostic research console for tabular biomedical classification.",
+    hero(
+        "Make biomedical ML legible.",
+        "A measurement-first workspace for comparing classical baselines and bounded quantum-kernel experiments—designed for researchers, students, and jury walkthroughs.",
+        chip="MVP READY · RESEARCH-ONLY · NON-DIAGNOSTIC",
     )
     with panel():
         st.markdown("### A measurement-first research console")
