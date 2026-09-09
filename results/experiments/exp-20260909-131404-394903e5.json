@@ -1,0 +1,136 @@
+{
+  "classical_models": {
+    "Logistic Regression": {
+      "summary": {
+        "accuracy": {
+          "mean": 0.9630836350134596,
+          "std": 0.007496290573454243
+        },
+        "balanced_accuracy": {
+          "mean": 0.9561841638063676,
+          "std": 0.012144498640357597
+        },
+        "f1": {
+          "mean": 0.9491293020704785,
+          "std": 0.011247002141456115
+        },
+        "precision": {
+          "mean": 0.970881895881896,
+          "std": 0.010762267185120626
+        },
+        "recall": {
+          "mean": 0.9291750503018109,
+          "std": 0.03061701718157982
+        },
+        "roc_auc": {
+          "mean": 0.9926911609714307,
+          "std": 0.0035525355940529066
+        },
+        "sensitivity": {
+          "mean": 0.9291750503018109,
+          "std": 0.03061701718157982
+        },
+        "specificity": {
+          "mean": 0.9831932773109244,
+          "std": 0.006861315806115366
+        }
+      },
+      "timing_seconds": 0.10746089997701347,
+      "validation": "Stratified 3-fold CV"
+    },
+    "SVM (RBF)": {
+      "summary": {
+        "accuracy": {
+          "mean": 0.9665924069432842,
+          "std": 0.006663633601270132
+        },
+        "balanced_accuracy": {
+          "mean": 0.965713891190279,
+          "std": 0.0070632089204381585
+        },
+        "f1": {
+          "mean": 0.9555416936418273,
+          "std": 0.008560946648250778
+        },
+        "precision": {
+          "mean": 0.9508778258778259,
+          "std": 0.03490662363327021
+        },
+        "recall": {
+          "mean": 0.9622401073105299,
+          "std": 0.028974929805488013
+        },
+        "roc_auc": {
+          "mean": 0.9911249006644911,
+          "std": 0.006088407487076618
+        },
+        "sensitivity": {
+          "mean": 0.9622401073105299,
+          "std": 0.028974929805488013
+        },
+        "specificity": {
+          "mean": 0.969187675070028,
+          "std": 0.022056044465019083
+        }
+      },
+      "timing_seconds": 0.1009788999799639,
+      "validation": "Stratified 3-fold CV"
+    }
+  },
+  "dataset": {
+    "class_distribution": {
+      "B": 357,
+      "M": 212
+    },
+    "feature_names": [
+      "mean radius",
+      "mean texture",
+      "mean perimeter",
+      "mean area",
+      "mean smoothness",
+      "mean compactness",
+      "mean concavity",
+      "mean concave points",
+      "mean symmetry",
+      "mean fractal dimension",
+      "radius error",
+      "texture error",
+      "perimeter error",
+      "area error",
+      "smoothness error",
+      "compactness error",
+      "concavity error",
+      "concave points error",
+      "symmetry error",
+      "fractal dimension error",
+      "worst radius",
+      "worst texture",
+      "worst perimeter",
+      "worst area",
+      "worst smoothness",
+      "worst compactness",
+      "worst concavity",
+      "worst concave points",
+      "worst symmetry",
+      "worst fractal dimension"
+    ],
+    "features": 30,
+    "rows": 569,
+    "target_column": "diagnosis"
+  },
+  "experiment_id": "exp-20260909-131404-394903e5",
+  "preprocessing": {
+    "pca_components": 4,
+    "pipeline": "Fold-fitted median imputation \u2192 StandardScaler \u2192 PCA"
+  },
+  "quantum": {
+    "available": false,
+    "configuration": {},
+    "metrics": {},
+    "reason": "Quantum simulation was not run. Enable 'Run experimental quantum kernel' to execute the optional, slower Qiskit workflow.",
+    "timing_seconds": null
+  },
+  "run_label": "classical-cv-3",
+  "runtime_seconds": 0.210870600072667,
+  "timestamp": "2026-09-09T13:14:04.807795+00:00"
+}

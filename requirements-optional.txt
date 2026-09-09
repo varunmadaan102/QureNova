@@ -2,4 +2,5 @@
 xgboost>=2.0
 shap>=0.46
 qiskit>=1.2
+qiskit-aer>=0.15
 qiskit-machine-learning>=0.8
