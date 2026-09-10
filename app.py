@@ -38,13 +38,11 @@ PAGES = [
 
 with st.sidebar:
     sidebar_brand()
+    st.divider()
     page = st.navigation(PAGES, position="sidebar")
     st.divider()
     st.caption("v2.0.0 · local session")
     st.caption("Research prototype · not for clinical diagnosis")
 
-# Page.title is not populated consistently across Streamlit releases when a
-# navigation object is created from a callable. Keep the global shell robust;
-# each view provides its own precise section heading.
 top_status("QureNova research console")
 page.run()

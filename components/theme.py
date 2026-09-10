@@ -3,28 +3,85 @@
 The helpers in this module are intentionally presentation-only. They do not
 read or mutate model/data state, which keeps the research workflows unchanged
 while giving every view the same visual language.
+
+This module provides:
+- Design tokens (colors, typography, spacing, radius, shadows)
+- CSS system for consistent styling
+- Reusable component helpers
+- Plotly chart templates
+- State management helpers (empty, loading, error)
 """
 
 from contextlib import contextmanager
+from enum import Enum
 
 import plotly.graph_objects as go
 import streamlit as st
 
 
+# Design System: Color Tokens
 COLORS = {
+    # Background levels
     "navy": "#07111f",
     "navy_2": "#0b1a2b",
     "panel": "#0f2235",
     "panel_2": "#122b42",
+    
+    # Borders and dividers
     "line": "#1c4058",
+    
+    # Text
     "text": "#e8f2f7",
     "muted": "#8ca7b7",
+    
+    # Primary accent (tech, active, important)
     "cyan": "#43d9df",
     "teal": "#29b7a8",
+    
+    # Semantic colors
     "green": "#56d48b",
     "amber": "#f2bd62",
     "red": "#f17b83",
 }
+
+# Design System: Typography Hierarchy
+# h1: page title (clamp 2rem-3.15rem)
+# h2: section header (1.55rem)
+# h3: subsection header (1.15rem)
+# body: default text (0.96rem)
+# small: metadata/captions (0.78rem)
+# code: monospace data (0.76-0.88rem)
+
+# Design System: Spacing (8px base unit)
+SPACING = {
+    "xs": "0.5rem",      # 8px
+    "sm": "0.75rem",     # 12px
+    "md": "1rem",        # 16px
+    "lg": "1.5rem",      # 24px
+    "xl": "2rem",        # 32px
+    "2xl": "2.5rem",     # 40px
+}
+
+# Design System: Border Radius
+RADIUS = {
+    "small": "3px",      # inputs, alerts
+    "md": "6px",         # buttons, cards
+    "lg": "8px",         # panels
+}
+
+# Design System: Shadows
+SHADOWS = {
+    "sm": "0 4px 12px rgba(0, 0, 0, 0.08)",
+    "md": "0 8px 24px rgba(0, 0, 0, 0.12)",
+    "lg": "0 16px 40px rgba(0, 0, 0, 0.16)",
+}
+
+class Status(Enum):
+    """State indicators for components."""
+    OK = "ok"
+    INFO = "info"
+    WARN = "warn"
+    ERROR = "error"
 
 PLOTLY_TEMPLATE = go.layout.Template(
     layout=go.Layout(
@@ -71,6 +128,9 @@ _CSS = """
   --q-muted: #8ca7b7;
   --q-cyan: #43d9df;
   --q-teal: #29b7a8;
+  --q-green: #56d48b;
+  --q-amber: #f2bd62;
+  --q-red: #f17b83;
 }
 
 html, body, [data-testid="stAppViewContainer"] {
@@ -93,93 +153,399 @@ html, body, [data-testid="stAppViewContainer"] {
 [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] { color: var(--q-text); }
 
 h1, h2, h3, h4 { font-family: "Space Grotesk", sans-serif !important; letter-spacing: -0.02em; }
-h1 { font-size: clamp(2rem, 4vw, 3.15rem) !important; font-weight: 700 !important; }
-h2 { font-size: 1.55rem !important; }
-h3 { font-size: 1.15rem !important; }
+h1 { font-size: clamp(2rem, 4vw, 3.15rem) !important; font-weight: 700 !important; margin-bottom: 0.5rem !important; }
+h2 { font-size: 1.55rem !important; font-weight: 600 !important; margin-bottom: 0.75rem !important; }
+h3 { font-size: 1.15rem !important; font-weight: 600 !important; margin-bottom: 0.5rem !important; }
 p, li, label, [data-testid="stCaptionContainer"] { font-family: "Space Grotesk", sans-serif; }
 code, pre, [data-testid="stMetricValue"], [data-testid="stMetricLabel"] {
   font-family: "IBM Plex Mono", Consolas, monospace !important;
 }
-[data-testid="stCaptionContainer"] { color: var(--q-muted) !important; }
-[data-testid="stCaptionContainer"] { font-size: 0.78rem; min-height: 1.1rem; }
+[data-testid="stCaptionContainer"] { color: var(--q-muted) !important; font-size: 0.78rem; min-height: 1.1rem; }
 
+/* Sidebar Navigation Improvements */
 .q-brand {
-  padding: 0.65rem 0.15rem 1.1rem;
+  padding: 0.75rem 0.15rem 1.25rem;
   border-bottom: 1px solid var(--q-line);
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
-.q-brand-mark { color: var(--q-cyan); font: 600 0.72rem "IBM Plex Mono", monospace; letter-spacing: 0.18em; }
-.q-brand-name { color: var(--q-text); font: 700 1.65rem "Space Grotesk", sans-serif; margin: 0.2rem 0; }
-.q-brand-meta { color: var(--q-muted); font: 400 0.72rem "IBM Plex Mono", monospace; }
+.q-brand-mark { 
+  color: var(--q-cyan); 
+  font: 600 0.68rem "IBM Plex Mono", monospace; 
+  letter-spacing: 0.18em; 
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 0.35rem;
+}
+.q-brand-name { 
+  color: var(--q-text); 
+  font: 700 1.8rem "Space Grotesk", sans-serif; 
+  margin: 0.15rem 0 0.25rem;
+  letter-spacing: -0.02em;
+}
+.q-brand-meta { 
+  color: var(--q-muted); 
+  font: 400 0.7rem "IBM Plex Mono", monospace; 
+  line-height: 1.3;
+}
+
+/* Navigation Styling */
+[data-testid="stSidebar"] [data-testid="navlink"] {
+  border-radius: 6px;
+  margin: 0.25rem 0;
+}
+[data-testid="stSidebar"] [data-testid="navlink"]:hover {
+  background: rgba(67, 217, 223, 0.08);
+}
+[data-testid="stSidebar"] [aria-current="page"] {
+  background: rgba(67, 217, 223, 0.15);
+  border-left: 2px solid var(--q-cyan);
+}
+
+/* Top Bar / Page Header */
 .q-topbar {
-  align-items: center; border-bottom: 1px solid var(--q-line); display: flex;
-  justify-content: space-between; margin: -0.85rem 0 2rem; padding: 0 0 0.9rem;
+  align-items: center; 
+  border-bottom: 1px solid var(--q-line); 
+  display: flex;
+  justify-content: space-between; 
+  margin: -0.85rem 0 2rem; 
+  padding: 0 0 0.9rem;
+  gap: 1rem;
 }
-.q-kicker { color: var(--q-cyan); font: 600 0.68rem "IBM Plex Mono", monospace; letter-spacing: 0.16em; text-transform: uppercase; }
-.q-section { border-left: 2px solid var(--q-cyan); margin: 1.65rem 0 0.8rem; padding-left: 0.75rem; }
+.q-kicker { 
+  color: var(--q-cyan); 
+  font: 600 0.68rem "IBM Plex Mono", monospace; 
+  letter-spacing: 0.16em; 
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+/* Page Header Component */
+.q-page-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--q-line);
+}
+.q-page-title {
+  color: var(--q-text);
+  font: 700 2rem "Space Grotesk", sans-serif;
+  margin: 0 0 0.5rem;
+  letter-spacing: -0.02em;
+}
+.q-page-subtitle {
+  color: var(--q-muted);
+  font: 400 0.95rem "Space Grotesk", sans-serif;
+  margin: 0;
+  line-height: 1.5;
+}
+.q-page-meta {
+  color: var(--q-muted);
+  font: 400 0.75rem "IBM Plex Mono", monospace;
+  margin-top: 0.5rem;
+  letter-spacing: 0.04em;
+}
+
+/* Section Styling */
+.q-section { 
+  border-left: 2px solid var(--q-cyan); 
+  margin: 1.75rem 0 1rem; 
+  padding-left: 0.75rem; 
+}
 .q-section h2, .q-section h3 { margin: 0 !important; }
-.q-section p { color: var(--q-muted); font: 0.76rem "IBM Plex Mono", monospace; margin: 0.25rem 0 0; }
-.q-panel {
-  background: rgba(15, 34, 53, 0.88); border: 1px solid var(--q-line);
-  border-radius: 8px; box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12);
-  padding: 1.1rem 1.15rem; margin: 0.55rem 0 1rem;
+.q-section p { 
+  color: var(--q-muted); 
+  font: 0.76rem "IBM Plex Mono", monospace; 
+  margin: 0.25rem 0 0;
 }
-.q-panel-title { color: var(--q-text); font: 600 0.76rem "IBM Plex Mono", monospace; letter-spacing: 0.08em; text-transform: uppercase; }
+
+/* Panel / Card Styling */
+.q-panel {
+  background: rgba(15, 34, 53, 0.88); 
+  border: 1px solid var(--q-line);
+  border-radius: 8px; 
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12);
+  padding: 1.1rem 1.15rem; 
+  margin: 0.55rem 0 1rem;
+}
+.q-panel-title { 
+  color: var(--q-text); 
+  font: 600 0.76rem "IBM Plex Mono", monospace; 
+  letter-spacing: 0.08em; 
+  text-transform: uppercase;
+  margin: 0 0 0.5rem;
+  display: block;
+}
+
+/* Status Card / Metric Card */
+.q-status-card {
+  background: rgba(15, 34, 53, 0.78);
+  border: 1px solid var(--q-line);
+  border-radius: 6px;
+  padding: 1rem;
+  margin: 0.5rem 0;
+}
+.q-status-label {
+  color: var(--q-muted);
+  font: 600 0.7rem "IBM Plex Mono", monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 0.4rem;
+}
+.q-status-value {
+  color: var(--q-cyan);
+  font: 600 1.3rem "Space Grotesk", sans-serif;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+.q-status-unit {
+  color: var(--q-muted);
+  font: 400 0.8rem "IBM Plex Mono", monospace;
+  margin-top: 0.2rem;
+}
+
+/* Hero Section */
 .q-hero {
   background:
     radial-gradient(circle at 88% 15%, rgba(67, 217, 223, 0.16), transparent 30%),
     linear-gradient(135deg, rgba(18, 43, 66, 0.98), rgba(9, 24, 39, 0.98));
-  border: 1px solid rgba(67, 217, 223, 0.28); border-radius: 14px;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18); margin: 0 0 1.3rem;
-  overflow: hidden; padding: 1.5rem 1.6rem; position: relative;
+  border: 1px solid rgba(67, 217, 223, 0.28); 
+  border-radius: 14px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18); 
+  margin: 0 0 1.3rem;
+  overflow: hidden; 
+  padding: 1.5rem 1.6rem; 
+  position: relative;
 }
 .q-hero::after {
-  border: 1px solid rgba(67, 217, 223, 0.14); border-radius: 50%;
-  content: ""; height: 240px; position: absolute; right: -80px; top: -100px; width: 240px;
+  border: 1px solid rgba(67, 217, 223, 0.14); 
+  border-radius: 50%;
+  content: ""; 
+  height: 240px; 
+  position: absolute; 
+  right: -80px; 
+  top: -100px; 
+  width: 240px;
 }
-.q-hero-kicker { color: var(--q-cyan); font: 600 0.68rem "IBM Plex Mono", monospace; letter-spacing: 0.18em; text-transform: uppercase; }
-.q-hero-title { color: var(--q-text); font: 700 clamp(2.1rem, 4vw, 3.8rem) "Space Grotesk", sans-serif; letter-spacing: -0.055em; line-height: 0.98; margin: 0.45rem 0 0.75rem; max-width: 700px; }
-.q-hero-copy { color: #b9ced8; font: 400 0.96rem/1.55 "Space Grotesk", sans-serif; max-width: 700px; }
-.q-hero-chip { color: #b7f5f0; display: inline-block; font: 600 0.68rem "IBM Plex Mono", monospace; margin-top: 0.8rem; }
-.q-divider { background: linear-gradient(90deg, var(--q-cyan), transparent); height: 1px; margin: 1.6rem 0; opacity: 0.5; }
-.q-badge {
-  border: 1px solid var(--q-line); border-radius: 999px; display: inline-flex;
-  font: 600 0.68rem "IBM Plex Mono", monospace; letter-spacing: 0.04em; padding: 0.26rem 0.58rem;
+.q-hero-kicker { 
+  color: var(--q-cyan); 
+  font: 600 0.68rem "IBM Plex Mono", monospace; 
+  letter-spacing: 0.18em; 
+  text-transform: uppercase;
 }
-.q-badge.ok { background: rgba(86, 212, 139, 0.12); border-color: rgba(86, 212, 139, 0.5); color: #80e6a8; }
-.q-badge.warn { background: rgba(242, 189, 98, 0.12); border-color: rgba(242, 189, 98, 0.5); color: #ffd68b; }
-.q-badge.error { background: rgba(241, 123, 131, 0.12); border-color: rgba(241, 123, 131, 0.5); color: #ffabb1; }
-.q-badge.info { background: rgba(67, 217, 223, 0.12); border-color: rgba(67, 217, 223, 0.5); color: #8ceff1; }
-.q-disclaimer {
-  background: rgba(242, 189, 98, 0.08); border: 1px solid rgba(242, 189, 98, 0.42);
-  border-left: 3px solid #f2bd62; color: #f8d99e; font: 0.76rem/1.45 "IBM Plex Mono", monospace;
-  margin: 1.2rem 0; padding: 0.8rem 0.95rem;
+.q-hero-title { 
+  color: var(--q-text); 
+  font: 700 clamp(2.1rem, 4vw, 3.8rem) "Space Grotesk", sans-serif; 
+  letter-spacing: -0.055em; 
+  line-height: 0.98; 
+  margin: 0.45rem 0 0.75rem; 
+  max-width: 700px;
 }
-.q-pipeline { color: var(--q-muted); font: 500 0.72rem "IBM Plex Mono", monospace; letter-spacing: 0.01em; }
-.q-pipeline strong { color: var(--q-cyan); }
+.q-hero-copy { 
+  color: #b9ced8; 
+  font: 400 0.96rem/1.55 "Space Grotesk", sans-serif; 
+  max-width: 700px;
+}
+.q-hero-chip { 
+  color: #b7f5f0; 
+  display: inline-block; 
+  font: 600 0.68rem "IBM Plex Mono", monospace; 
+  margin-top: 0.8rem;
+}
 
-div[data-testid="stMetric"], [data-testid="stVerticalBlockBorderWrapper"] {
-  background: rgba(15, 34, 53, 0.78); border-color: var(--q-line) !important; border-radius: 3px !important;
+/* Divider & Visual Separators */
+.q-divider { 
+  background: linear-gradient(90deg, var(--q-cyan), transparent); 
+  height: 1px; 
+  margin: 1.6rem 0; 
+  opacity: 0.5;
 }
-[data-testid="stMetricLabel"] { color: var(--q-muted) !important; font-size: 0.7rem !important; letter-spacing: 0.04em; text-transform: uppercase; }
-[data-testid="stMetricValue"] { color: var(--q-cyan) !important; font-size: 1.4rem !important; }
+
+/* Status Badges */
+.q-badge {
+  border: 1px solid var(--q-line); 
+  border-radius: 999px; 
+  display: inline-flex;
+  font: 600 0.68rem "IBM Plex Mono", monospace; 
+  letter-spacing: 0.04em; 
+  padding: 0.26rem 0.58rem;
+}
+.q-badge.ok { 
+  background: rgba(86, 212, 139, 0.12); 
+  border-color: rgba(86, 212, 139, 0.5); 
+  color: #80e6a8;
+}
+.q-badge.warn { 
+  background: rgba(242, 189, 98, 0.12); 
+  border-color: rgba(242, 189, 98, 0.5); 
+  color: #ffd68b;
+}
+.q-badge.error { 
+  background: rgba(241, 123, 131, 0.12); 
+  border-color: rgba(241, 123, 131, 0.5); 
+  color: #ffabb1;
+}
+.q-badge.info { 
+  background: rgba(67, 217, 223, 0.12); 
+  border-color: rgba(67, 217, 223, 0.5); 
+  color: #8ceff1;
+}
+
+/* Disclaimer / Warning Box */
+.q-disclaimer {
+  background: rgba(242, 189, 98, 0.08); 
+  border: 1px solid rgba(242, 189, 98, 0.42);
+  border-left: 3px solid #f2bd62; 
+  color: #f8d99e; 
+  font: 0.76rem/1.45 "IBM Plex Mono", monospace;
+  margin: 1.2rem 0; 
+  padding: 0.8rem 0.95rem;
+  border-radius: 3px;
+}
+
+/* Empty State / Loading State */
+.q-empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--q-muted);
+}
+.q-empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.4;
+}
+.q-empty-title {
+  font: 600 1.2rem "Space Grotesk", sans-serif;
+  color: var(--q-text);
+  margin-bottom: 0.5rem;
+}
+.q-empty-description {
+  font: 400 0.95rem "Space Grotesk", sans-serif;
+  line-height: 1.5;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.q-loading-state {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--q-muted);
+}
+.q-loading-spinner {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid var(--q-line);
+  border-top-color: var(--q-cyan);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.q-error-state {
+  background: rgba(241, 123, 131, 0.08);
+  border: 1px solid rgba(241, 123, 131, 0.3);
+  border-left: 3px solid #f17b83;
+  border-radius: 6px;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+.q-error-title {
+  font: 600 0.95rem "Space Grotesk", sans-serif;
+  color: #ffabb1;
+  margin-bottom: 0.4rem;
+}
+.q-error-message {
+  font: 400 0.9rem "Space Grotesk", sans-serif;
+  color: var(--q-muted);
+}
+
+/* Pipeline Component */
+.q-pipeline { 
+  color: var(--q-muted); 
+  font: 500 0.72rem "IBM Plex Mono", monospace; 
+  letter-spacing: 0.01em;
+}
+.q-pipeline strong { 
+  color: var(--q-cyan);
+}
+
+/* Data Tables & Metrics */
+div[data-testid="stMetric"], [data-testid="stVerticalBlockBorderWrapper"] {
+  background: rgba(15, 34, 53, 0.78); 
+  border-color: var(--q-line) !important; 
+  border-radius: 3px !important;
+}
+[data-testid="stMetricLabel"] { 
+  color: var(--q-muted) !important; 
+  font-size: 0.7rem !important; 
+  letter-spacing: 0.04em; 
+  text-transform: uppercase;
+}
+[data-testid="stMetricValue"] { 
+  color: var(--q-cyan) !important; 
+  font-size: 1.4rem !important;
+}
+
+/* Form Elements */
 button, [data-baseweb="select"] > div, input, textarea {
-  border-radius: 6px !important; border-color: var(--q-line) !important;
+  border-radius: 6px !important; 
+  border-color: var(--q-line) !important;
 }
 button[kind="primary"] {
   background: linear-gradient(135deg, var(--q-teal), #43d9df) !important;
-  box-shadow: 0 8px 20px rgba(41, 183, 168, 0.18); color: #041018 !important;
+  box-shadow: 0 8px 20px rgba(41, 183, 168, 0.18); 
+  color: #041018 !important;
   font-weight: 700 !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-button:hover { border-color: var(--q-cyan) !important; color: var(--q-cyan) !important; transform: translateY(-1px); }
-[data-testid="stAlert"] { background: rgba(15, 34, 53, 0.92); border-radius: 3px; }
-[data-testid="stDataFrame"], [data-testid="stTable"] { border: 1px solid var(--q-line); border-radius: 3px; overflow: hidden; }
-pre, [data-testid="stCodeBlock"] { background: #06101c !important; border: 1px solid var(--q-line); border-radius: 3px !important; }
-hr { border-color: var(--q-line) !important; }
+button[kind="primary"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(41, 183, 168, 0.24);
+}
+button:hover { 
+  border-color: var(--q-cyan) !important; 
+  color: var(--q-cyan) !important; 
+  transform: translateY(-1px);
+}
+button:active {
+  transform: translateY(0);
+}
+
+/* Alerts */
+[data-testid="stAlert"] { 
+  background: rgba(15, 34, 53, 0.92); 
+  border-radius: 3px;
+}
+
+/* Tables & DataFrames */
+[data-testid="stDataFrame"], [data-testid="stTable"] { 
+  border: 1px solid var(--q-line); 
+  border-radius: 3px; 
+  overflow: hidden;
+}
+
+/* Code Blocks */
+pre, [data-testid="stCodeBlock"] { 
+  background: #06101c !important; 
+  border: 1px solid var(--q-line); 
+  border-radius: 3px !important;
+}
+
+/* Horizontal Rule */
+hr { 
+  border-color: var(--q-line) !important;
+}
+
+/* Responsive Design */
 @media (max-width: 800px) {
   [data-testid="stMainBlockContainer"] { padding: 1.4rem 1rem 3rem; }
   .q-topbar { align-items: flex-start; gap: 0.7rem; }
   .q-hero { padding: 1.2rem; }
+  .q-page-title { font-size: 1.6rem; }
 }
 @media (max-width: 480px) {
   [data-testid="stMainBlockContainer"] { padding: 1rem 0.7rem 2.5rem; }
@@ -188,6 +554,7 @@ hr { border-color: var(--q-line) !important; }
   .q-hero { padding: 0.95rem; }
   .q-hero-title { font-size: 2rem; }
   .q-hero-copy { font-size: 0.88rem; }
+  .q-page-title { font-size: 1.4rem; }
 }
 </style>
 """
@@ -298,3 +665,109 @@ def style_figure(fig):
     """Apply the shared Plotly template without changing traces or values."""
     fig.update_layout(template=PLOTLY_TEMPLATE)
     return fig
+
+
+def page_header(title, subtitle=None, meta=None):
+    """Render a consistent page header with title, subtitle, and metadata."""
+    meta_html = f'<div class="q-page-meta">{meta}</div>' if meta else ""
+    subtitle_html = f'<div class="q-page-subtitle">{subtitle}</div>' if subtitle else ""
+    st.markdown(
+        f"""
+        <div class="q-page-header">
+          <div class="q-page-title">{title}</div>
+          {subtitle_html}
+          {meta_html}
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def status_card(label, value, unit=None, status="info"):
+    """Render a status metric card with label, value, and optional unit."""
+    unit_html = f'<div class="q-status-unit">{unit}</div>' if unit else ""
+    safe_status = status if status in {"ok", "warn", "error", "info"} else "info"
+    st.markdown(
+        f"""
+        <div class="q-status-card">
+          <div class="q-status-label">{label}</div>
+          <div class="q-status-value">{value}</div>
+          {unit_html}
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def empty_state(icon, title, description, action_text=None):
+    """Render an empty state with icon, title, and description."""
+    action_html = f'<p style="margin-top: 1rem;"><strong>{action_text}</strong></p>' if action_text else ""
+    st.markdown(
+        f"""
+        <div class="q-empty-state">
+          <div class="q-empty-icon">{icon}</div>
+          <div class="q-empty-title">{title}</div>
+          <div class="q-empty-description">{description}{action_html}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def loading_state(message):
+    """Render a loading state with spinner and message."""
+    st.markdown(
+        f"""
+        <div class="q-loading-state">
+          <div class="q-loading-spinner"></div>
+          <p>{message}</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def error_state(title, message):
+    """Render an error state with title and message."""
+    st.markdown(
+        f"""
+        <div class="q-error-state">
+          <div class="q-error-title">{title}</div>
+          <div class="q-error-message">{message}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def section_divider():
+    """Render a visual section divider."""
+    st.markdown('<div class="q-divider"></div>', unsafe_allow_html=True)
+
+
+def info_card(title, content):
+    """Render an information card with title and content."""
+    st.markdown(
+        f"""
+        <div class="q-panel">
+          <div class="q-panel-title">{title}</div>
+          {content}
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def stat_row(stats):
+    """Render a horizontal row of status cards.
+    
+    Args:
+        stats: List of tuples (label, value, unit, status)
+    """
+    cols = st.columns(len(stats))
+    for col, stat in zip(cols, stats):
+        with col:
+            label, value, unit = stat[0], stat[1], stat[2] if len(stat) > 2 else None
+            status = stat[3] if len(stat) > 3 else "info"
+            status_card(label, value, unit, status)
+

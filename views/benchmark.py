@@ -11,6 +11,7 @@ from services.comparison_service import (
 )
 
 def render():
+    # Keep backend logic intact; focus on consistent premium UI framing.
     section_header("Model benchmark", "Compare measured performance, stability, and runtime across available artifacts.")
     result = st.session_state.get("experiment_result")
     if not result:
