@@ -159,6 +159,168 @@ def load_demo_dataset():
     )
     return clean_dataframe(pd.read_csv(path))
 
+
+def _local_path_for_breast_cancer_wisconsin_csv() -> Path:
+    return (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "datasets"
+        / "breast_cancer_wisconsin.csv"
+    )
+
+
+@st.cache_data(show_spinner=False)
+def load_breast_cancer_wisconsin(*, allow_download: bool = False) -> pd.DataFrame:
+    """Load Breast Cancer Wisconsin dataset from local CSV.
+
+    Expected format: one row per sample, numeric feature columns, and a binary
+    target column (named 'diagnosis' or 'target' by default if present).
+
+    If the local CSV is missing and allow_download=True, we attempt a graceful
+    download using UCI if internet is available. If not available, we raise a
+    Streamlit-visible error.
+    """
+    local_path = _local_path_for_breast_cancer_wisconsin_csv()
+    if local_path.exists():
+        df = clean_dataframe(pd.read_csv(local_path))
+        # Ensure diagnosis is binary for the experiment pipeline.
+        if "diagnosis" in df.columns:
+            def _map_diag(v):
+                s = str(v).strip().upper()
+                if s in ("M", "MALIGNANT", "1"):
+                    return 1
+                if s in ("B", "BENIGN", "0"):
+                    return 0
+                # Legacy UCI diagnosis encoding is typically an integer 1..10.
+                # We map {2,4,6,8,10} as malignant(1) and {1,3,5,7,9} as benign(0)
+                # only if the value is in 1..10.
+                try:
+                    v_int = int(s)
+                    if v_int in range(1, 11):
+                        return 1 if v_int % 2 == 0 else 0
+                    return pd.NA
+                except Exception:
+                    return pd.NA
+            df["diagnosis"] = df["diagnosis"].map(_map_diag)
+        # Coerce numeric features.
+        for col in df.columns:
+            if col == "diagnosis":
+                continue
+            df[col] = pd.to_numeric(df[col], errors="coerce")
+        return df
+
+    if not allow_download:
+        st.error(
+            "Breast Cancer Wisconsin CSV was not found locally. "
+            "Please place it at data/datasets/breast_cancer_wisconsin.csv or enable download."
+        )
+        raise FileNotFoundError(str(local_path))
+
+    # Optional / graceful download path.
+    # Avoid hard dependency on network. If unavailable, fail with clear Streamlit error.
+    try:
+        import pandas as _pd
+        import urllib.request as _rq
+
+        # UCI Breast Cancer Wisconsin (Diagnostic) dataset.
+        url = (
+            "https://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/breast-cancer-wisconsin.data"
+        )
+        st.info("Downloading Breast Cancer Wisconsin from UCI...")
+        with _rq.urlopen(url, timeout=20) as resp:
+            raw = resp.read().decode("utf-8")
+
+        # UCI file is whitespace- and comma-mixed with no headers; first column is diagnosis.
+        # We map the canonical Wisconsin feature names used in many references.
+        columns = [
+            "id",
+            "diagnosis",
+            "radius_mean",
+            "texture_mean",
+            "perimeter_mean",
+            "area_mean",
+            "smoothness_mean",
+            "compactness_mean",
+            "concavity_mean",
+            "concave_points_mean",
+            "symmetry_mean",
+            "fractal_dimension_mean",
+            "radius_se",
+            "texture_se",
+            "perimeter_se",
+            "area_se",
+            "smoothness_se",
+            "compactness_se",
+            "concavity_se",
+            "concave_points_se",
+            "symmetry_se",
+            "fractal_dimension_se",
+            "radius_worst",
+            "texture_worst",
+            "perimeter_worst",
+            "area_worst",
+            "smoothness_worst",
+            "compactness_worst",
+            "concavity_worst",
+            "concave_points_worst",
+            "symmetry_worst",
+            "fractal_dimension_worst",
+        ]
+
+        # The UCI file is comma-separated but can contain placeholders like '?'.
+        df = _pd.read_csv(
+            _pd.io.common.StringIO(raw),
+            header=None,
+            names=columns,
+        )
+        # Remove id if present; keep diagnosis and numeric features.
+        if "id" in df.columns:
+            df = df.drop(columns=["id"])
+        df = clean_dataframe(df)
+
+        # Convert raw UCI 'diagnosis' (B/M or other legacy encodings) into
+        # a clean binary target in {0,1}.
+        if "diagnosis" in df.columns:
+            def _map_diag(v):
+                s = str(v).strip().upper()
+                if s in ("M", "MALIGNANT", "1"):
+                    return 1
+                if s in ("B", "BENIGN", "0"):
+                    return 0
+                # If the dataset already uses numeric encodings 1..10, fall
+                # back to binary by treating {4,5,6,7,8,9,10} as malignant is
+                # not safe; instead coerce to NaN and let downstream validation
+                # handle it.
+                try:
+                    return int(s)
+                except Exception:
+                    return _pd.NA
+
+            df["diagnosis"] = df["diagnosis"].map(_map_diag)
+
+        # Coerce all numeric feature columns to numeric (placeholders to NaN).
+        for col in df.columns:
+            if col == "diagnosis":
+                continue
+            df[col] = _pd.to_numeric(df[col], errors="coerce")
+
+        # The canonical UCI file may include placeholders like '?'.
+        # Convert numeric feature columns to numeric and coerce invalids to NaN.
+        for col in df.columns:
+            if col == 'diagnosis':
+                continue
+            df[col] = pd.to_numeric(df[col], errors='coerce')
+
+        # Persist for next run.
+        local_path.parent.mkdir(parents=True, exist_ok=True)
+        df.to_csv(local_path, index=False)
+        return df
+    except Exception as exc:
+        st.error(
+            "Could not load Breast Cancer Wisconsin from UCI. "
+            f"No local CSV found and download failed: {type(exc).__name__}: {exc}"
+        )
+        raise
 def infer_target_column(df):
     preferred = ["diagnosis", "target", "label", "class", "outcome"]
     lower = {str(c).lower(): c for c in df.columns}

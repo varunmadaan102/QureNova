@@ -12,6 +12,8 @@ from core.data import (
 
 
 def _model_features(reference_df, target):
+    # Prefer the canonical demo schema if it matches; otherwise derive numeric
+    # feature columns dynamically so explainability stays dataset-agnostic.
     schema = validate_schema(
         reference_df,
         required_features=DEMO_FEATURE_NAMES,
@@ -20,6 +22,7 @@ def _model_features(reference_df, target):
     )
     if not schema["missing_features"]:
         return DEMO_FEATURE_NAMES
+
     features = numeric_feature_columns(reference_df, target)
     if not features:
         raise ValueError("No numeric predictive features are available for explanation.")

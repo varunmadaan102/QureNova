@@ -10,6 +10,7 @@ from core.data import (
     clean_dataframe,
     infer_target_column,
     load_demo_dataset,
+    load_breast_cancer_wisconsin,
     numeric_feature_columns,
     validate_schema,
 )
@@ -30,23 +31,42 @@ def render():
     )
 
     # Upload Section
-    section_header("Dataset Upload", "Load your data or use the demonstration dataset")
-    
-    col1, col2 = st.columns([2, 1])
-    with col1:
-        uploaded = st.file_uploader("Upload CSV", type=["csv"], help="Comma-separated file with one row per sample")
-    with col2:
-        use_demo = st.button("Load Demo Dataset", use_container_width=True)
+    section_header("Dataset Upload", "Load your data or use a built-in dataset")
 
-    if uploaded is not None:
-        try:
-            df = clean_dataframe(pd.read_csv(uploaded))
-            st.session_state["dataset"] = df
-        except (pd.errors.ParserError, UnicodeDecodeError, ValueError) as exc:
-            error_state("CSV Read Error", f"Could not parse the uploaded file: {exc}")
-            return
-    elif use_demo:
-        st.session_state["dataset"] = _demo()
+    selector = st.radio(
+        "Dataset source",
+        options=["Demo dataset", "Breast Cancer Wisconsin (local/optional download)", "Upload CSV"],
+        index=0,
+        horizontal=True,
+        help="Choose a built-in dataset or upload your own CSV.",
+    )
+
+    if selector == "Demo dataset":
+        if st.button("Load Demo Dataset", use_container_width=True):
+            st.session_state["dataset"] = _demo()
+
+    elif selector == "Breast Cancer Wisconsin (local/optional download)":
+        if st.button("Load Breast Cancer Wisconsin", use_container_width=True):
+            st.session_state["dataset"] = load_breast_cancer_wisconsin(allow_download=True)
+
+    else:
+        uploaded = st.file_uploader(
+            "Upload CSV",
+            type=["csv"],
+            help="Comma-separated file with one row per sample",
+        )
+        if uploaded is not None:
+            try:
+                df = clean_dataframe(pd.read_csv(uploaded))
+                st.session_state["dataset"] = df
+            except (pd.errors.ParserError, UnicodeDecodeError, ValueError) as exc:
+                error_state("CSV Read Error", f"Could not parse the uploaded file: {exc}")
+                return
+
+    # If a dataset is already loaded from a prior interaction, keep it.
+    # Initialize target selection based on the currently loaded dataset.
+    if "dataset" not in st.session_state:
+        st.session_state["dataset"] = None
 
     df = st.session_state.get("dataset")
     if df is None:
@@ -73,7 +93,9 @@ def render():
 
     # Target Selection
     section_header("Target Configuration", "Select a binary classification target")
-    
+
+    # In medically-grounded binary mode, we keep target column in session
+    # so downstream experiment + explainability stays consistent.
     target_guess = infer_target_column(df)
     target_options = ["No target (inspection only)"] + list(df.columns)
     target_default = (
@@ -210,5 +232,6 @@ def render():
                     st.warning(f"Feature-space view unavailable: {exc}")
     
     section_divider()
-    disclaimer("CSV data is stored in session memory. The feature-space chart is an educational visualization; it does not establish clinical evidence.")
+    disclaimer("Research insight only: this tool is for educational exploration of machine-learning models and does not provide clinical diagnosis or medical advice. Any results are not a substitute for professional judgment.")
+ce.")
 

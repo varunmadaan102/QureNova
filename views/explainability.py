@@ -31,4 +31,6 @@ def render():
             except ValueError as exc:
                 st.error(f"Explanation could not be computed: {exc}")
 
-    disclaimer("Feature contributions explain model behaviour. They do not establish biological causation or clinical causality.")
+    disclaimer(
+        "Research insight guardrail: feature contributions are model-behavior signals and do not provide clinical diagnosis or medical advice, and do not establish biological causation."
+    )

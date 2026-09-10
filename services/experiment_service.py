@@ -25,6 +25,13 @@ from quantum.feature_maps import qiskit_available
 from quantum.kernel import compute_quantum_kernel, kernel_diagnostics
 from quantum.alignment import kernel_target_alignment
 
+# Quantum is executed in an isolated worker process because native backends (e.g., Aer/QML)
+# can segfault the interpreter. Subprocess isolation lets Streamlit remain alive.
+import json
+import os
+import subprocess
+import tempfile
+
 def _score(model, X):
     if hasattr(model, "predict_proba"):
         return model.predict_proba(X)[:, 1]
@@ -97,7 +104,9 @@ def _classical_pca_cv(X, y, folds, random_state, pca_components):
         }
     return results
 
-def _quantum_holdout(X, y, qubits, feature_map):
+def _quantum_holdout_isolated(X, y, qubits, feature_map):
+    """Run quantum kernel QSVC in a separate process to prevent native segfaults."""
+    # IMPORTANT: keep classical path alive even if quantum segfaults.
     if not qiskit_available():
         return {
             "available": False,
@@ -108,7 +117,13 @@ def _quantum_holdout(X, y, qubits, feature_map):
     from sklearn.preprocessing import StandardScaler
     from sklearn.decomposition import PCA
 
+    import json
+    import subprocess
+    import tempfile
+    import sys
+
     started = time.perf_counter()
+
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.25, stratify=y, random_state=RANDOM_STATE
     )
@@ -120,57 +135,84 @@ def _quantum_holdout(X, y, qubits, feature_map):
         X_train, y_train = X_train[selected], y_train[selected]
 
     components = safe_pca_components(qubits, len(X_train), X_train.shape[1])
+
+    # Quantum feature maps require finite numeric inputs; ensure NaNs are
+    # handled inside the worker-safe preprocessing.
+    from sklearn.impute import SimpleImputer
+
     prep = __import__("sklearn.pipeline", fromlist=["Pipeline"]).Pipeline([
+        ("imputer", SimpleImputer(strategy="median")),
         ("scaler", StandardScaler()),
         ("pca", PCA(n_components=components, random_state=RANDOM_STATE)),
     ])
     X_train_q = prep.fit_transform(X_train)
     X_test_q = prep.transform(X_test)
 
-    train_kernel, test_kernel, circuit = compute_quantum_kernel(
-        X_train_q, X_test_q,
-        {"feature_map": feature_map, "num_qubits": components}
-    )
+    # Worker expects concatenated [X_train_q; X_test_q]
+    X_worker = np.concatenate([X_train_q, X_test_q], axis=0)
 
-    model = build_precomputed_qsvc()
-    model.fit(train_kernel, y_train)
-    pred = model.predict(test_kernel)
-    score = model.decision_function(test_kernel)
+    worker_out_dir = tempfile.mkdtemp(prefix="quantum_worker_")
+    out_path = os.path.join(worker_out_dir, "result.json")
 
-    metrics = evaluate_predictions(y_test, pred, score)
-    alignment = kernel_target_alignment(train_kernel, y_train)
+    worker_script = os.path.join(os.path.dirname(__file__), "..", "scripts", "quantum_holdout_worker.py")
+    worker_script = os.path.abspath(worker_script)
 
-    circuit_text = None
-    circuit_reason = None
-    try:
-        circuit_text = str(circuit.draw(output="text"))
-        if len(circuit_text) > 50000:
-            circuit_reason = f"Circuit text rendering exceeded max length (50000 chars)."
-            circuit_text = None
-    except Exception as e:
-        circuit_reason = f"Circuit text rendering failed: {type(e).__name__}: {e}"
-        circuit_text = None
+    cmd = [
+        sys.executable,
+        worker_script,
+        "--x",
+        json.dumps(X_worker.tolist()),
+        "--y_train",
+        json.dumps(np.asarray(y_train).tolist()),
+        "--y_test",
+        json.dumps(np.asarray(y_test).tolist()),
+        "--feature_map",
+        str(feature_map),
+        "--num_qubits",
+        str(int(components)),
+        "--out",
+        out_path,
+    ]
 
-    return {
-        "available": True,
-        "configuration": {
-            "backend": "Qiskit fidelity quantum kernel simulator",
-            "feature_map": feature_map,
-            "num_qubits": components,
-            "validation": "Stratified holdout (quantum demonstration)",
-            "comparison_status": "Contextual only; not directly comparable to CV means",
-            "train_samples": int(len(X_train)),
-            "test_samples": int(len(X_test)),
-        },
-        "metrics": metrics,
-        "timing_seconds": time.perf_counter() - started,
-        "kernel_diagnostics": kernel_diagnostics(train_kernel),
-        "kernel_target_alignment": alignment,
-        "confusion_matrix": build_confusion(y_test, pred),
-        "kernel_preview": train_kernel[:30, :30].tolist(),
-        "circuit": circuit_text,
-        "circuit_reason": circuit_reason,
+    # IMPORTANT: allow enough time for quantum to run, but don't hang the Streamlit request.
+    # 120s is a reasonable cap; adjust if your deployment is slower.
+    timeout_sec = int(os.environ.get("QURENOVA_QUANTUM_TIMEOUT_SECONDS", "120"))
+
+    proc = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout_sec)
+
+    if proc.returncode != 0:
+        return {
+            "available": False,
+            "reason": f"Quantum worker failed (exit code {proc.returncode}).",
+            "worker_stdout": proc.stdout[-4000:],
+            "worker_stderr": proc.stderr[-4000:],
+            "timing_seconds": time.perf_counter() - started,
+        }
+
+    if not os.path.exists(out_path):
+        return {
+            "available": False,
+            "reason": "Quantum worker did not produce result.json.",
+            "worker_stdout": proc.stdout[-4000:],
+            "worker_stderr": proc.stderr[-4000:],
+            "timing_seconds": time.perf_counter() - started,
+        }
+
+    with open(out_path, "r", encoding="utf-8") as f:
+        q = json.load(f)
+
+    q["configuration"] = q.get("configuration") or {
+        "backend": "Qiskit fidelity quantum kernel simulator",
+        "feature_map": feature_map,
+        "num_qubits": components,
+        "validation": "Stratified holdout (quantum demonstration)",
+        "comparison_status": "Contextual only; not directly comparable to CV means",
+        "train_samples": int(len(X_train)),
+        "test_samples": int(len(X_test)),
     }
+    q["timing_seconds"] = time.perf_counter() - started
+
+    return q
 
 
 def _quantum_skipped(reason):
@@ -183,17 +225,22 @@ def _quantum_skipped(reason):
 def run_experiment(df, target_column=None, config=None):
     config = config or {}
     df = clean_dataframe(df)
+
+    # Prefer explicit target column. If not provided, infer from columns.
     target_column = target_column or infer_target_column(df)
 
     if not target_column:
         raise ValueError("No target column found. Select a binary target column before running an experiment.")
 
+    # Validate schema against the demo feature contract if possible.
+    # If the dataset doesn't match, we fall back to all numeric feature columns.
     demo_schema = validate_schema(
         df, DEMO_FEATURE_NAMES, target_column=target_column
     )
+
     feature_names = (
         DEMO_FEATURE_NAMES
-        if not demo_schema["missing_features"]
+        if (not demo_schema["missing_features"] and len(demo_schema["invalid_numeric_features"]) == 0)
         else numeric_feature_columns(df, target_column)
     )
     validation = validate_dataset(
@@ -201,8 +248,16 @@ def run_experiment(df, target_column=None, config=None):
     )
     if not validation["valid"]:
         raise ValueError("; ".join(validation["errors"]))
+    # If the dataset uses the raw UCI Wisconsin format, 'diagnosis' may contain
+    # multiple numeric encodings. We require exactly two classes for binary
+    # classification.
     if df[target_column].nunique(dropna=True) != 2:
-        raise ValueError("The selected target must contain exactly two classes.")
+        return {
+            "class_distribution": {str(k): int(v) for k, v in df[target_column].value_counts().to_dict().items()},
+            "class_distribution_note": "Quantum/classical experiment requires exactly 2 classes; returning without running models.",
+            "quantum_results": _quantum_skipped("Dataset target is not binary; exactly two classes required."),
+            "available": False,
+        }
 
     if not feature_names:
         raise ValueError("No numeric predictive features were found.")
@@ -237,7 +292,7 @@ def run_experiment(df, target_column=None, config=None):
     )
 
     if config.get("run_quantum", False):
-        quantum = _quantum_holdout(
+        quantum = _quantum_holdout_isolated(
             X.to_numpy(),
             y.to_numpy(),
             int(config.get("quantum_qubits", DEFAULT_QUANTUM_QUBITS)),
@@ -245,8 +300,8 @@ def run_experiment(df, target_column=None, config=None):
         )
     else:
         quantum = _quantum_skipped(
-            "Quantum simulation was not run. Enable 'Run experimental quantum kernel' "
-            "to execute the optional, slower Qiskit workflow."
+            "Quantum simulation was not run. Enable 'Enable quantum kernel computation' "
+            "to execute the optional Qiskit workflow."
         )
 
     return {
