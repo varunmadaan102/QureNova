@@ -1,0 +1,181 @@
+{
+  "started_at": "2026-09-09T13:14:28.132360+00:00",
+  "qiskit_available": true,
+  "runs": [
+    {
+      "label": "quantum-zz-2q",
+      "status": "completed",
+      "history": "results\\experiments\\exp-20260909-131449-7afd642c.json",
+      "runtime_seconds": 20.725029399851337,
+      "quantum": {
+        "available": true,
+        "metrics": {
+          "accuracy": 0.6293706293706294,
+          "balanced_accuracy": 0.5,
+          "precision": 0.0,
+          "recall": 0.0,
+          "sensitivity": 0.0,
+          "specificity": 1.0,
+          "f1": 0.0,
+          "roc_auc": 0.45136268343815517
+        },
+        "configuration": {
+          "backend": "Qiskit fidelity quantum kernel simulator",
+          "feature_map": "zz",
+          "num_qubits": 2,
+          "validation": "Stratified holdout (quantum demonstration)",
+          "comparison_status": "Contextual only; not directly comparable to CV means",
+          "train_samples": 64,
+          "test_samples": 143
+        },
+        "reason": null
+      }
+    },
+    {
+      "label": "quantum-zz-4q",
+      "status": "completed",
+      "history": "results\\experiments\\exp-20260909-131530-0e6aee1d.json",
+      "runtime_seconds": 40.96334739984013,
+      "quantum": {
+        "available": true,
+        "metrics": {
+          "accuracy": 0.6363636363636364,
+          "balanced_accuracy": 0.5171907756813418,
+          "precision": 0.6,
+          "recall": 0.05660377358490566,
+          "sensitivity": 0.05660377358490566,
+          "specificity": 0.9777777777777777,
+          "f1": 0.10344827586206896,
+          "roc_auc": 0.48385744234800837
+        },
+        "configuration": {
+          "backend": "Qiskit fidelity quantum kernel simulator",
+          "feature_map": "zz",
+          "num_qubits": 4,
+          "validation": "Stratified holdout (quantum demonstration)",
+          "comparison_status": "Contextual only; not directly comparable to CV means",
+          "train_samples": 64,
+          "test_samples": 143
+        },
+        "reason": null
+      }
+    },
+    {
+      "label": "quantum-zz-6q",
+      "status": "completed",
+      "history": "results\\experiments\\exp-20260909-131653-7e77ea38.json",
+      "runtime_seconds": 82.83327080006711,
+      "quantum": {
+        "available": true,
+        "metrics": {
+          "accuracy": 0.6293706293706294,
+          "balanced_accuracy": 0.5,
+          "precision": 0.0,
+          "recall": 0.0,
+          "sensitivity": 0.0,
+          "specificity": 1.0,
+          "f1": 0.0,
+          "roc_auc": 0.43563941299790354
+        },
+        "configuration": {
+          "backend": "Qiskit fidelity quantum kernel simulator",
+          "feature_map": "zz",
+          "num_qubits": 6,
+          "validation": "Stratified holdout (quantum demonstration)",
+          "comparison_status": "Contextual only; not directly comparable to CV means",
+          "train_samples": 64,
+          "test_samples": 143
+        },
+        "reason": null
+      }
+    },
+    {
+      "label": "quantum-z-2q",
+      "status": "completed",
+      "history": "results\\experiments\\exp-20260909-131710-884c22b5.json",
+      "runtime_seconds": 16.969801400089636,
+      "quantum": {
+        "available": true,
+        "metrics": {
+          "accuracy": 0.6293706293706294,
+          "balanced_accuracy": 0.5,
+          "precision": 0.0,
+          "recall": 0.0,
+          "sensitivity": 0.0,
+          "specificity": 1.0,
+          "f1": 0.0,
+          "roc_auc": 0.4872117400419287
+        },
+        "configuration": {
+          "backend": "Qiskit fidelity quantum kernel simulator",
+          "feature_map": "z",
+          "num_qubits": 2,
+          "validation": "Stratified holdout (quantum demonstration)",
+          "comparison_status": "Contextual only; not directly comparable to CV means",
+          "train_samples": 64,
+          "test_samples": 143
+        },
+        "reason": null
+      }
+    },
+    {
+      "label": "quantum-z-4q",
+      "status": "completed",
+      "history": "results\\experiments\\exp-20260909-131742-cc99a9ca.json",
+      "runtime_seconds": 32.10276779998094,
+      "quantum": {
+        "available": true,
+        "metrics": {
+          "accuracy": 0.6223776223776224,
+          "balanced_accuracy": 0.5138364779874214,
+          "precision": 0.45454545454545453,
+          "recall": 0.09433962264150944,
+          "sensitivity": 0.09433962264150944,
+          "specificity": 0.9333333333333333,
+          "f1": 0.15625,
+          "roc_auc": 0.5477987421383648
+        },
+        "configuration": {
+          "backend": "Qiskit fidelity quantum kernel simulator",
+          "feature_map": "z",
+          "num_qubits": 4,
+          "validation": "Stratified holdout (quantum demonstration)",
+          "comparison_status": "Contextual only; not directly comparable to CV means",
+          "train_samples": 64,
+          "test_samples": 143
+        },
+        "reason": null
+      }
+    },
+    {
+      "label": "quantum-z-6q",
+      "status": "completed",
+      "history": "results\\experiments\\exp-20260909-131849-27551eee.json",
+      "runtime_seconds": 67.30679790000431,
+      "quantum": {
+        "available": true,
+        "metrics": {
+          "accuracy": 0.6223776223776224,
+          "balanced_accuracy": 0.5022012578616353,
+          "precision": 0.4,
+          "recall": 0.03773584905660377,
+          "sensitivity": 0.03773584905660377,
+          "specificity": 0.9666666666666667,
+          "f1": 0.06896551724137931,
+          "roc_auc": 0.5471698113207548
+        },
+        "configuration": {
+          "backend": "Qiskit fidelity quantum kernel simulator",
+          "feature_map": "z",
+          "num_qubits": 6,
+          "validation": "Stratified holdout (quantum demonstration)",
+          "comparison_status": "Contextual only; not directly comparable to CV means",
+          "train_samples": 64,
+          "test_samples": 143
+        },
+        "reason": null
+      }
+    }
+  ],
+  "finished_at": "2026-09-09T13:18:49.636544+00:00"
+}
